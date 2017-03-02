@@ -388,8 +388,7 @@ def forgot(request):
             email = form.cleaned_data['email']
             
             try: 
-                user = User.objects.get(email=email, 
-                                        userdata__email_verified=True)
+                user = User.objects.get(email=email)
                 if getattr(user, 'social_auth', None) and user.social_auth.exists():
                     send_social_auth_provider_login_email(request, user)
                 else:
