@@ -11,13 +11,16 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.template.loader import get_template
 from django.template.context import Context
 from django.contrib.auth.decorators import login_required, user_passes_test
-from urllib import quote
+try:
+    from urllib import quote
+except:
+    from urllib.parse import quote
 
-from models import EmailVerification
-from forms import SignUpForm, ForgotPasswordForm,\
+from accounts.models import EmailVerification
+from accounts.forms import SignUpForm, ForgotPasswordForm,\
     ResetPasswordForm, SocialAccountConfirmForm, LogInForm, UserDetailForm, \
     ChangePasswordForm
-from actions import apply_user_permissions, send_password_reset_email,\
+from accounts.actions import apply_user_permissions, send_password_reset_email,\
     send_social_auth_provider_login_email, generate_username
 from nursery.view_helpers import decorate_view
 
@@ -27,7 +30,7 @@ def index(request):
     """
     if request.user.is_anonymous():
         return login_page(request)
-    
+
     c = {}
 
     user = request.user
@@ -46,7 +49,7 @@ def login_page(request):
 
     next_page = request.GET.get('next', '/')
     c = {}
-    
+
     if request.method == 'POST':
         form = LogInForm(request.POST)
         if form.is_valid:
@@ -101,7 +104,7 @@ def login_page(request):
     # c = dict(GPLUS_ID=settings.SOCIAL_AUTH_GOOGLE_PLUS_KEY,
     #          GPLUS_SCOPE=' '.join(settings.SOCIAL_AUTH_GOOGLE_PLUS_SCOPES),
     c = dict(next=quote(next_page), form=form)
-    
+
     return render(request, 'accounts/login.html', c)
 
 
@@ -176,11 +179,11 @@ class ChangePasswordView(FormView):
 def register(request):
     """Show the registration page.
     """
-    
+
     if not request.user.is_anonymous():
         return HttpResponseRedirect('/')
-    
-    if request.method == 'POST': 
+
+    if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
             real_name = form.cleaned_data['real_name']
@@ -190,7 +193,7 @@ def register(request):
             username = generate_username(email)
 
             user, created = get_user_model().objects.get_or_create(username=username)
-            if not created: 
+            if not created:
                 # This may happen if the form is submitted outside the normal
                 # login flow with a user that already exists
                 return render(request, 'accounts/registration_error.html')
@@ -206,7 +209,7 @@ def register(request):
 
             apply_user_permissions(user)
             # verify_email_address(request, user)
-            
+
             return render(request, 'accounts/success.html')
     else:
         form = SignUpForm()
@@ -214,16 +217,16 @@ def register(request):
     c = {
         'form': form,
     }
-    return render(request, 'accounts/register.html', c)    
+    return render(request, 'accounts/register.html', c)
 
 
 @login_required
 def verify_new_email(request):
     if request.method != 'POST':
         raise Http404()
-    
+
     verify_email_address(request, request.user, False)
-    
+
     return render(request, 'accounts/check_your_email.html')
 
 
@@ -330,12 +333,12 @@ def verify_email(request, code):
     """Check for an email verification code in the querystring
     """
 
-    # Is the code in the database? 
+    # Is the code in the database?
     e = get_object_or_404(EmailVerification, verification_code=code)
 
-    if e.activate_user: 
+    if e.activate_user:
         e.user.is_active = True
-    
+
     e.user.userdata.email_verified = True
     e.user.userdata.save()
     e.user.save()
@@ -348,11 +351,11 @@ def all_logged_in_users():
     users = []
     for session in sessions:
         uid = session.get_decoded().get('_auth_user_id', None)
-        if uid: 
+        if uid:
             user_obj = get_user_model().objects.filter(id=uid)
             if user_obj:
                 users.append({'user': user_obj[0], 'until': session.expire_date})
-    
+
     return users
 
 
@@ -372,31 +375,31 @@ def debug_page(request):
     return render(request, 'accounts/debug.html', c)
 
 
-def forgot(request): 
-    """Sends a password reset link to a user's validated email address. If 
-    the email address isn't validated, do nothing (?) 
+def forgot(request):
+    """Sends a password reset link to a user's validated email address. If
+    the email address isn't validated, do nothing (?)
     """
     # This doesn't make sense if the user is logged in
     if not request.user.is_anonymous():
         return HttpResponseRedirect('/')
 
-    if request.method == 'POST': 
+    if request.method == 'POST':
         User = get_user_model()
-        
+
         form = ForgotPasswordForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
-            
-            try: 
+
+            try:
                 user = User.objects.get(email=email)
                 if getattr(user, 'social_auth', None) and user.social_auth.exists():
                     send_social_auth_provider_login_email(request, user)
                 else:
                     send_password_reset_email(request, user)
-                    
+
             except User.DoesNotExist:
                 pass
-            
+
             return render(request, 'accounts/forgot/wait_for_email.html')
     else:
         form = ForgotPasswordForm()
@@ -405,34 +408,34 @@ def forgot(request):
         'form': form,
     }
     return render(request, 'accounts/forgot/forgot.html', c)
-    
-    
-def forgot_reset(request, code): 
-    """Allows a user who has clicked on a validation link to reset their 
+
+
+def forgot_reset(request, code):
+    """Allows a user who has clicked on a validation link to reset their
     password.
     """
     # This doesn't make sense if the user is logged in
     if not request.user.is_anonymous():
         return HttpResponseRedirect('/')
-    
+
     e = get_object_or_404(EmailVerification, verification_code=code)
-    
-    if not e.user.is_active: 
+
+    if not e.user.is_active:
         raise Http404('Inactive user')
-    
+
     if getattr(e.user, 'social_auth', None) and e.user.social_auth.all().exists():
         raise Http404('User has a social auth login')
-    
-    if request.method == 'POST': 
+
+    if request.method == 'POST':
         form = ResetPasswordForm(request.POST)
         if form.is_valid():
             password1 = form.cleaned_data['password1']
-            
+
             e.user.set_password(password1)
             e.user.save()
-            
+
             e.delete()
-            
+
             return render(request, 'accounts/forgot/reset_successful.html')
 
     else:
@@ -440,7 +443,7 @@ def forgot_reset(request, code):
 
     c = {
         'form': form,
-        'code': code, 
+        'code': code,
     }
     return render(request, 'accounts/forgot/reset.html', c)
 
@@ -455,6 +458,3 @@ if settings.DEBUG:
         request.user.is_superuser = True
         request.user.save()
         return HttpResponse('You are now staff+superuser', content_type='text/plain', status=200)
-
-        
-

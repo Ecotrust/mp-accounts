@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.template.context import Context
 from django.template.loader import get_template
-from models import EmailVerification
+from accounts.models import EmailVerification
 
 def apply_user_permissions(user):
     """Configure any initial permissions/groups for the user.

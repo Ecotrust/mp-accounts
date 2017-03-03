@@ -1,8 +1,8 @@
 from django import forms
-from widgets import BSLeftIconTextInput, BSLeftIconPasswordInput,\
+from accounts.widgets import BSLeftIconTextInput, BSLeftIconPasswordInput,\
     BSLeftIconEmailInput
 from django.contrib.auth import get_user_model, authenticate
-from models import PasswordDictionary
+from accounts.models import PasswordDictionary
 from django.core.exceptions import ValidationError
 from captcha.fields import ReCaptchaField
 
@@ -11,21 +11,21 @@ def l_icon(icon_class, placeholder=None, attrs=None):
     """Shortcut for a left icon text input
     """
     attrs = attrs or {}
-    if placeholder: 
+    if placeholder:
         attrs.update(placeholder=placeholder)
     return BSLeftIconTextInput(attrs, icon_class)
 
 
 def l_icon_pw(icon_class, placeholder=None, attrs=None):
     attrs = attrs or {}
-    if placeholder: 
+    if placeholder:
         attrs.update(placeholder=placeholder)
     return BSLeftIconPasswordInput(attrs, icon_class)
 
 
 def l_icon_email(icon_class, placeholder=None, attrs=None):
     attrs = attrs or {}
-    if placeholder: 
+    if placeholder:
         attrs.update(placeholder=placeholder)
     return BSLeftIconEmailInput(attrs, icon_class)
 
@@ -40,8 +40,8 @@ class DivForm(forms.Form):
     """A form that adds an 'as_div()' method which renders each form element
     inside <div></div> tags.
     """
-    
-    def as_div(self): 
+
+    def as_div(self):
         "Returns this form rendered as HTML <div>s."
         return self._html_output(
             normal_row='<div%(html_class_attr)s>%(errors)s%(label)s %(field)s%(help_text)s</div>',
@@ -50,7 +50,7 @@ class DivForm(forms.Form):
             help_text_html=' <span class="helptext">%s</span>',
             errors_on_separate_row=False)
 
-    
+
 class SignUpForm(DivForm):
     real_name = forms.CharField(min_length=3, max_length=100,
                                 widget=l_icon('fa fa-info', 'first and last name'), label="First and Last Name")
@@ -70,15 +70,15 @@ class SignUpForm(DivForm):
 
     def clean(self):
         """Raise a validation error if the username or email address provided
-        are already in use. 
+        are already in use.
         """
-        
+
         cleaned_data = super(SignUpForm, self).clean()
-        
+
         username = cleaned_data.get('username')
         email = cleaned_data.get('email')
-        
-        if get_user_model().objects.filter(username=username).exists(): 
+
+        if get_user_model().objects.filter(username=username).exists():
             msg = u"This user name is already in use, please select another."
             self.add_error("username", msg)
         if get_user_model().objects.filter(email=email).exists():
@@ -93,7 +93,7 @@ class LogInForm(DivForm):
                            widget=l_icon('fa fa-envelope-o', 'email'))
     password = forms.CharField(min_length=6, max_length=100,
                                widget=l_icon_pw('fa fa-unlock-alt', 'password'))
-    
+
 
 class ForgotPasswordForm(DivForm):
     email = forms.EmailField(widget=l_icon('fa fa-envelope-o', 'email address'))
@@ -109,10 +109,10 @@ class ResetPasswordForm(DivForm):
                                 label="Confirm your password")
 
     def clean(self):
-        """Raise a validation error if the passwords do not match. 
+        """Raise a validation error if the passwords do not match.
         """
         cleaned_data = super(ResetPasswordForm, self).clean()
-        
+
         password1 = cleaned_data.get('password1')
         password2 = cleaned_data.get('password2')
 

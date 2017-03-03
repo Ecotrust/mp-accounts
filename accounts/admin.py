@@ -2,13 +2,13 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from models import PasswordDictionary
+from accounts.models import PasswordDictionary
 admin.site.register(PasswordDictionary)
 
-from models import UserData
+from accounts.models import UserData
 admin.site.register(UserData)
 
-from models import EmailVerification
+from accounts.models import EmailVerification
 admin.site.register(EmailVerification)
 
 from import_export import fields, resources
