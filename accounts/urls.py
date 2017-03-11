@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from django.conf import settings
 from django.views.generic import RedirectView
-from accounts.views import UserDetailView, ChangePasswordView, index, register, forgot, forgot_reset, social_confirm, verify_new_email, verify_email, promote_user, debug_page
+from accounts.views import UserDetailView, ChangePasswordView, index, register, forgot, forgot_reset, social_confirm, verify_new_email, verify_email
 from django.contrib.auth.views import logout
 
 urlpatterns = [
@@ -27,6 +27,7 @@ urlpatterns = [
 
 
 if settings.DEBUG:
+    from accounts.views import promote_user, debug_page
     urlpatterns.extend([
         url(r'^promote-user$', promote_user),
         url(r'^debug$', debug_page)
