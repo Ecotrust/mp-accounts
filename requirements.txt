@@ -3,3 +3,4 @@ social-auth-app-django
 beautifulsoup4
 django-recaptcha
 django_libsass
+django-import-export
