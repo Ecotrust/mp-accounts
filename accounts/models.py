@@ -15,6 +15,9 @@ class EmailVerification(models.Model):
     activate_user = models.BooleanField(default=True,
         help_text=("If true, user.is_active will be set to true when verified."))
 
+    class Meta:
+        app_label = 'accounts'
+
     def __str__(self):
         return "Verification, uid=%s, email=%s, when=%s" % (self.user.pk,
                                                             self.email_to_verify,
@@ -39,6 +42,9 @@ class UserData(models.Model):
     preferred_name = models.CharField(max_length=30, default='')
 
     show_real_name_by_default = models.BooleanField(default=False)
+
+    class Meta:
+        app_label = 'accounts'
 
     def __str__(self):
         return "UserData for %s" % self.real_name
@@ -71,6 +77,7 @@ class PasswordDictionary(models.Model):
     class Meta:
         verbose_name = 'Password Dictionary'
         verbose_name_plural = 'Password Dictionary'
+        app_label = 'accounts'
 
     def natural_key(self):
         return self.password
