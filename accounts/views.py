@@ -53,23 +53,34 @@ def login_page(request):
     if request.method == 'POST':
         form = LogInForm(request.POST)
         if form.is_valid:
-            email = request.POST['email']
+            if 'email' in request.POST.keys():
+                email = request.POST['email']
+            else:
+                email = None
+            if 'username' in request.POST.keys():
+                username = request.POST['username']
+            else:
+                username = None
             p = request.POST['password']
 
-            # We can't actually authenticate with an email address. So, we have
-            # to query the User models by email address to find a username,
-            # and once we have that we can use the username to log in.
-            try:
-                user = User.objects.get(email__iexact=email)
-            except User.DoesNotExist:
-                form = LogInForm()
-                form.cleaned_data = {}
+            if username:
+                user = authenticate(username=username, password=p)
+            else:
+                # We can't actually authenticate with an email address. So, we have
+                # to query the User models by email address to find a username,
+                # and once we have that we can use the username to log in.
+                try:
+                    user = User.objects.get(email__iexact=email)
+                except User.DoesNotExist:
+                    form = LogInForm()
+                    form.cleaned_data = {}
 
-                form.add_error('email', "Your login information does not match our records. Try again or click 'I forgot my password' below.")
-                c = dict(next=quote(next_page), form=form)
-                return render(request, 'accounts/login.html', c)
+                    form.add_error('email', "Your login information does not match our records. Try again or click 'I forgot my password' below.")
+                    c = dict(next=quote(next_page), form=form)
+                    return render(request, 'accounts/login.html', c)
 
-            user = authenticate(username=user.username, password=p)
+                user = authenticate(username=user.username, password=p)
+
             if user is not None:
                 if user.is_active:
                     login(request, user)
