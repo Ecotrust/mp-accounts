@@ -3,7 +3,6 @@ import re
 from django.contrib.auth.models import Group
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.template.context import Context
 from django.template.loader import get_template
 from accounts.models import EmailVerification
 
@@ -61,11 +60,11 @@ def send_password_reset_email(request, user):
     url = request.build_absolute_uri(reverse('account:forgot_reset',
                                              args=(e.verification_code,)))
 
-    context = Context({
+    context = {
         'name': user.get_short_name(),
         'url': url,
         'team_email': settings.DEFAULT_FROM_EMAIL,
-    })
+    }
 
     template = get_template('accounts/forgot/mail/password_reset.txt')
     body_txt = template.render(context)
@@ -87,11 +86,11 @@ def send_social_auth_provider_login_email(request, user):
     # we don't have a name for the main page, so try a /
     url = request.build_absolute_uri('/')
 
-    context = Context({
+    context = {
         'name': user.get_short_name(),
         'auth_provider_name': nice_provider_name(user),
         'site_url': url,
-    })
+    }
 
     template = get_template('accounts/forgot/mail/you_are_using_a_social_account.txt')
     body_txt = template.render(context)

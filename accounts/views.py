@@ -425,7 +425,13 @@ def forgot(request):
                 if getattr(user, 'social_auth', None) and user.social_auth.exists():
                     send_social_auth_provider_login_email(request, user)
                 else:
-                    send_password_reset_email(request, user)
+                    try:
+                        send_password_reset_email(request, user)
+                    except User.userdata.RelatedObjectDoesNotExist:
+                        from accounts.models import UserData
+                        UserData.objects.get_or_create(user=user)
+                        send_password_reset_email(request, user)
+
 
             except User.DoesNotExist:
                 pass
