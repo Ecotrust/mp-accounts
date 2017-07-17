@@ -52,21 +52,37 @@ class DivForm(forms.Form):
 
 
 class SignUpForm(DivForm):
-    real_name = forms.CharField(min_length=3, max_length=100,
-                                widget=l_icon('fa fa-info', 'first and last name'), label="First and Last Name")
+    from marineplanner import settings
+    if not settings.REGISTRATION_FORM_FIELDS or ('first_and_last' in settings.REGISTRATION_FORM_FIELDS.keys() and settings.REGISTRATION_FORM_FIELDS['first_and_last']):
+        real_name = forms.CharField(min_length=3, max_length=100,
+                                    widget=l_icon('fa fa-info', 'first and last name'), label="First and Last Name")
 
-    preferred_name = forms.CharField(min_length=2, max_length=100,
-                                     widget=l_icon('fa fa-info', 'preferred name'), label="Preferred Name")
+    if not settings.REGISTRATION_FORM_FIELDS or ('preferred_name' in settings.REGISTRATION_FORM_FIELDS.keys() and settings.REGISTRATION_FORM_FIELDS['preferred_name']):
+        preferred_name = forms.CharField(min_length=2, max_length=100,
+                                         widget=l_icon('fa fa-info', 'preferred name'), label="Preferred Name")
 
     # hide_real_name = forms.BooleanField()
 
-    email = forms.EmailField(widget=l_icon('fa fa-envelope-o', 'email address'))
+    ### Not a field in the original Marineplanner Overhaul, do not show by default (hence 'and' instead of 'or')
+    if settings.REGISTRATION_FORM_FIELDS and 'username' in settings.REGISTRATION_FORM_FIELDS.keys() and settings.REGISTRATION_FORM_FIELDS['username']:
+        username = forms.CharField(min_length=6, max_length=100,
+                                    widget=l_icon('fa fa-info', 'username'), label="Username")
 
-    password = forms.CharField(min_length=6, max_length=100,
-                               widget=l_icon_pw('fa fa-unlock-alt', 'password'),
-                               validators=[password_dictionary_validator])
+    if not settings.REGISTRATION_FORM_FIELDS or ('email' in settings.REGISTRATION_FORM_FIELDS.keys() and settings.REGISTRATION_FORM_FIELDS['email']):
+        email = forms.EmailField(widget=l_icon('fa fa-envelope-o', 'email address'))
 
-    captcha = ReCaptchaField()
+    if not settings.REGISTRATION_FORM_FIELDS or ('password' in settings.REGISTRATION_FORM_FIELDS.keys() and settings.REGISTRATION_FORM_FIELDS['password']):
+        password = forms.CharField(min_length=6, max_length=100,
+                                   widget=l_icon_pw('fa fa-unlock-alt', 'password'),
+                                   validators=[password_dictionary_validator])
+
+        ### Not a field in the original Marineplanner Overhaul, do not show by default (hence 'and' instead of 'or')
+        if settings.REGISTRATION_FORM_FIELDS and 'confirm_password' in settings.REGISTRATION_FORM_FIELDS.keys() and settings.REGISTRATION_FORM_FIELDS['confirm_password']:
+            confirm_password = forms.CharField(min_length=6, max_length=100,
+                                       widget=l_icon_pw('fa fa-unlock-alt', 'confirm password'))
+
+    if not settings.REGISTRATION_FORM_FIELDS or ('captcha' in settings.REGISTRATION_FORM_FIELDS.keys() and settings.REGISTRATION_FORM_FIELDS['captcha']):
+        captcha = ReCaptchaField()
 
     def clean(self):
         """Raise a validation error if the username or email address provided
@@ -77,6 +93,9 @@ class SignUpForm(DivForm):
 
         username = cleaned_data.get('username')
         email = cleaned_data.get('email')
+        password = cleaned_data.get('password')
+        confirm_password = cleaned_data.get('confirm_password')
+
 
         if get_user_model().objects.filter(username=username).exists():
             msg = u"This user name is already in use, please select another."
@@ -84,6 +103,9 @@ class SignUpForm(DivForm):
         if get_user_model().objects.filter(email=email).exists():
             msg = u"This email address is already in use, please select another"
             self.add_error("email", msg)
+        if not password == confirm_password:
+            msg = u"'Password' does not match 'Confirm password'"
+            self.add_error("password", msg)
 
         return cleaned_data
 

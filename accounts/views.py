@@ -197,8 +197,14 @@ def register(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            real_name = form.cleaned_data['real_name']
-            preferred_name = form.cleaned_data['preferred_name']
+            if 'real_name' in form.cleaned_data.keys():
+                real_name = form.cleaned_data['real_name']
+            else:
+                real_name = None
+            if 'preferred_name' in form.cleaned_data.keys():
+                preferred_name = form.cleaned_data['preferred_name']
+            else:
+                preferred_name = None
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
             username = generate_username(email)
@@ -233,6 +239,7 @@ def register(request):
     c = {
         'form': form,
     }
+
     return render(request, 'accounts/register.html', c)
 
 

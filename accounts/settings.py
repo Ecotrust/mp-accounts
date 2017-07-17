@@ -1,3 +1,15 @@
+### FROM MP-ACCOUNTS SETTINGS ###
+# registration
+REGISTRATION_FORM_FIELDS = {
+    'first_and_last': False,
+    'preferred_name': False,
+    'username': True,
+    'email': True,
+    'password': True,
+    'confirm_password': True,
+    'captcha': True,
+}
+
 # authentication
 SOCIAL_AUTH_NEW_USER_URL = '/account/?new=true&login=django'
 SOCIAL_AUTH_FACBEOOK_NEW_USER_URL = '/account/?new=true&login=facebook'
@@ -84,3 +96,4 @@ SOCIAL_AUTH_PIPELINE = (
     # 'social.pipeline.debug.debug',
     'accounts.pipeline.clean_session',
 )
+### END MP-ACCOUNTS SETTINGS ###
