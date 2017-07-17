@@ -244,6 +244,7 @@ def register(request):
 
     c = {
         'form': form,
+        'social_options': settings.SOCIAL_AUTH_LOGIN_OPTIONS,
     }
 
     return render(request, 'accounts/register.html', c)

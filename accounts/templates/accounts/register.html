@@ -14,18 +14,31 @@
     <h2 id="form-begin" style="text-align: center;">Sign Up</h2>
 
     <div class="login-form">
-        <div><h4>Sign up with your Facebook or Twitter account</h4></div>
+        {% if social_options and social_options|length > 0 %}
+        <div><h4>Sign up with your
+          {% for opt in social_options %}
+            {% if forloop.counter > 1 %} or {% endif %}
+            {{ opt }}
+          {% endfor %}
+          account</h4></div>
         <div class="social-login" style="text-align:center">
+          {% for opt in social_options %}
+            {% if opt == 'Twitter' %}
             <a class="fa-stack fa-lg" href="{% url 'social:begin' 'twitter' %}?next={{ next }}">
                 <i class="fa fa-circle fa-stack-2x green"></i>
                 <i class="fa fa-twitter fa-stack-1x white"></i>
             </a>
+            {% endif %}
 
+            {% if opt == 'Facebook' %}
             <a class="fa-stack fa-lg" href="{% url 'social:begin' 'facebook' %}?next={{ next }}">
                 <i class="fa fa-circle fa-stack-2x green"></i>
                 <i class="fa fa-facebook fa-stack-1x white"></i>
             </a>
+            {% endif %}
+          {% endfor %}
         </div>
+        {% endif %}
     </div>
     <div>
         <form class="login-form" id="register-form" method="POST" action="{% url 'account:register' %}#form-begin">
@@ -51,10 +64,12 @@
             </style>
             {% csrf_token %}
 
+            {% if social_options|length > 0 %}
             <hr style="border-color: #b1b3b5" />
             <div>
                 <h4>Or create a new account with a password</h4>
             </div>
+            {% endif %}
 
             {{ form.as_div }}
             <hr style="border-color: #b1b3b5" />
