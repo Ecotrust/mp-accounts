@@ -31,7 +31,7 @@
         </p>
         <p>
         {% if user.is_superuser %}
-            <a class="btn btn-success" href="/django-admin">Go to the Django admin page</a>
+            <a class="btn btn-success" href="{{ admin_url }}">Go to the Django admin page</a>
         {% endif %}
         {% if user.is_staff %}
             <a class="btn btn-success" href="/admin">Go to the CMS admin page</a>
@@ -48,7 +48,7 @@
             </form>
         </blockquote>
         {% endif %}
-        --> 
+        -->
 
 
         <h3>Map Groups</h3>

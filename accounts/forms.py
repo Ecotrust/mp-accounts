@@ -65,7 +65,7 @@ class SignUpForm(DivForm):
 
     ### Not a field in the original Marineplanner Overhaul, do not show by default (hence 'and' instead of 'or')
     if settings.REGISTRATION_FORM_FIELDS and 'username' in settings.REGISTRATION_FORM_FIELDS.keys() and settings.REGISTRATION_FORM_FIELDS['username']:
-        username = forms.CharField(min_length=6, max_length=100,
+        username = forms.CharField(min_length=4, max_length=100,
                                     widget=l_icon('fa fa-info', 'username'), label="Username")
 
     if not settings.REGISTRATION_FORM_FIELDS or ('email' in settings.REGISTRATION_FORM_FIELDS.keys() and settings.REGISTRATION_FORM_FIELDS['email']):
@@ -111,8 +111,13 @@ class SignUpForm(DivForm):
 
 
 class LogInForm(DivForm):
-    email = forms.CharField(min_length=4, max_length=100,
-                           widget=l_icon('fa fa-envelope-o', 'email'))
+    from marineplanner.settings import LOG_IN_WITH_EMAIL
+    if LOG_IN_WITH_EMAIL:
+        email = forms.CharField(min_length=4, max_length=100,
+                               widget=l_icon('fa fa-envelope-o', 'email'))
+    else:
+        username = forms.CharField(min_length=4, max_length=100,
+                               widget=l_icon('fa fa-envelope-o', 'username'))
     password = forms.CharField(min_length=6, max_length=100,
                                widget=l_icon_pw('fa fa-unlock-alt', 'password'))
 

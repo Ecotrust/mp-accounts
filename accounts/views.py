@@ -39,6 +39,12 @@ def index(request):
     else:
         c['can_change_password'] = True
 
+    if settings.ADMIN_URL:
+        c['admin_url'] = settings.ADMIN_URL
+    else:
+        # Leftover wagtail workaround - both it and django wanted 'admin'
+        c['admin_url'] = "/django-admin"
+
     return render(request, 'accounts/index.html', c)
 
 
