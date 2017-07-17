@@ -19,7 +19,7 @@ ADMIN_URL = None
 SOCIAL_AUTH_LOGIN_OPTIONS = [
     'Twitter',
     'Facebook',
-    'Google',
+    # 'Google',
 ]
 
 SOCIAL_AUTH_NEW_USER_URL = '/account/?new=true&login=django'
