@@ -214,6 +214,11 @@ def register(request):
             user.email = email
             user.save()
 
+            from .models import UserData
+
+            userdata, created = UserData.objects.get_or_create(user=user)
+            user.userdata = userdata
+
             user.userdata.real_name = real_name
             user.userdata.preferred_name = preferred_name
             user.userdata.save()
