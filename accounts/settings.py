@@ -1,8 +1,8 @@
 ### FROM MP-ACCOUNTS SETTINGS ###
 # registration
 REGISTRATION_FORM_FIELDS = {
-    'first_and_last': False,
-    'preferred_name': False,
+    'first_and_last': True,
+    'preferred_name': True,
     'username': True,
     'email': True,
     'password': True,
