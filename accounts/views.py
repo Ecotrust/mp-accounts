@@ -213,7 +213,10 @@ def register(request):
                 preferred_name = None
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            username = generate_username(email)
+            if 'username' in form.cleaned_data.keys():
+                username = form.cleaned_data['username']
+            else:
+                username = generate_username(email)
 
             user, created = get_user_model().objects.get_or_create(username=username)
             if not created:
