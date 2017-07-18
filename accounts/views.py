@@ -81,7 +81,7 @@ def login_page(request):
                     form = LogInForm()
                     form.cleaned_data = {}
 
-                    form.add_error('email', "Your login information does not match our records. Try again or click 'I forgot my password' below.")
+                    form.add_error('password', "Your login information does not match our records. Try again or click 'I forgot my password' below.")
                     c = dict(next=quote(next_page), form=form)
                     return render(request, 'accounts/login.html', c)
 
@@ -103,7 +103,7 @@ def login_page(request):
                 form = LogInForm()
                 form.cleaned_data = {}
 
-                form.add_error('email', "Your login information does not match our records. Try again or click 'I forgot my password' below.")
+                form.add_error('password', "Your login information does not match our records. Try again or click 'I forgot my password' below.")
                 c = dict(next=quote(next_page), form=form)
                 return render(request, 'accounts/login.html', c)
         else:
