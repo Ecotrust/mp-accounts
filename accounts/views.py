@@ -48,13 +48,12 @@ def index(request):
     return render(request, 'accounts/index.html', c)
 
 
-def login_page(request):
+def login_page(request, return_template='accounts/login.html', c={}):
     """The login view. Served from index()
     """
     User = get_user_model()
 
     next_page = request.GET.get('next', '/')
-    c = {}
 
     if request.method == 'POST':
         form = LogInForm(request.POST)
@@ -82,8 +81,9 @@ def login_page(request):
                     form.cleaned_data = {}
 
                     form.add_error('password', "Your login information does not match our records. Try again or click 'I forgot my password' below.")
-                    c = dict(next=quote(next_page), form=form)
-                    return render(request, 'accounts/login.html', c)
+                    c['next']=quote(next_page)
+                    c['form']=form
+                    return render(request, templates_object['unknown_user'], c)
 
                 user = authenticate(username=user.username, password=p)
 
@@ -97,22 +97,25 @@ def login_page(request):
 
                     form.add_error('email', "Your email address is incorrect")
                     form.add_error('password', "Your password is incorrect")
-                    c = dict(next=quote(next_page), form=form)
-                    return render(request, 'accounts/login.html', c)
+                    c['next']=quote(next_page)
+                    c['form']=form
+                    return render(request, return_template, c)
             else:
                 form = LogInForm()
                 form.cleaned_data = {}
 
                 form.add_error('password', "Your login information does not match our records. Try again or click 'I forgot my password' below.")
-                c = dict(next=quote(next_page), form=form)
-                return render(request, 'accounts/login.html', c)
+                c['next']=quote(next_page)
+                c['form']=form
+                return render(request, return_template, c)
         else:
             form = LogInForm()
             form.cleaned_data = {}
 
             form.add_error('email', "Please try again")
-            c = dict(next=quote(next_page), form=form)
-            return render(request, 'accounts/login.html', c)
+            c['next']=quote(next_page)
+            c['form']=form
+            return render(request, return_template, c)
     else:
         form = LogInForm()
 
@@ -120,9 +123,10 @@ def login_page(request):
 
     # c = dict(GPLUS_ID=settings.SOCIAL_AUTH_GOOGLE_PLUS_KEY,
     #          GPLUS_SCOPE=' '.join(settings.SOCIAL_AUTH_GOOGLE_PLUS_SCOPES),
-    c = dict(next=quote(next_page), form=form)
+    c['next']=quote(next_page)
+    c['form']=form
 
-    return render(request, 'accounts/login.html', c)
+    return render(request, return_template, c)
 
 
 @decorate_view(login_required)
