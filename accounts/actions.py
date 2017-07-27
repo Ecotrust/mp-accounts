@@ -74,8 +74,8 @@ def send_password_reset_email(request, user):
 #     template = get_template('accounts/mail/verify_email.html')
 #     body_html = template.render(context)
 
-    user.email_user('MARCO Sign-in Information', body_txt, fail_silently=False)
-    #user.email_user('MARCO Sign-in Information', body_txt,
+    user.email_user(settings.FORGOT_EMAIL_SUBJECT, body_txt, fail_silently=False)
+    #user.email_user(settings.FORGOT_EMAIL_SUBJECT, body_txt,
     #                html_message=body_html, fail_silently=False)
 
 
@@ -101,7 +101,7 @@ def send_social_auth_provider_login_email(request, user):
 #     template = get_template('accounts/mail/verify_email.html')
 #     body_html = template.render(context)
 
-    user.email_user('MARCO Sign-in Information', body_txt,
+    user.email_user(settings.FORGOT_EMAIL_SUBJECT, body_txt,
                     html_message=body_html, fail_silently=False)
 
 

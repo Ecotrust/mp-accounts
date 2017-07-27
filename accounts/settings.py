@@ -107,4 +107,14 @@ SOCIAL_AUTH_PIPELINE = (
     # 'social.pipeline.debug.debug',
     'accounts.pipeline.clean_session',
 )
+
+EMAIL_HOST_USER = 'noreply@ecotrust.org'
+DEFAULT_FROM_EMAIL = 'noreply@ecotrust.org'
+SERVER_EMAIL = 'noreply@ecotrust.org'
+
+FORGOT_EMAIL_SUBJECT = 'Password Reset Request'
+
+
+RECAPTCHA_PUBLIC_KEY = 'Manage Recaptcha via Google Account to get public key'
+RECAPTCHA_PRIVATE_KEY = 'SetInLocalSettings'
 ### END MP-ACCOUNTS SETTINGS ###
