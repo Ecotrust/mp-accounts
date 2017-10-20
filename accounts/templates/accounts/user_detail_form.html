@@ -5,7 +5,7 @@
 <script>
 </script>
 
-<div style="border: 1px solid blue; margin: 1em 10em; padding: 3em">
+<div style="border: 1px solid blue; margin: 1em 10em; padding: 3em" class="accounts-form-wrap">
     <h2 style="text-align: center;">Hello, {{ user.get_short_name }}</h2>
     <h3 style="text-align: center;">Update your account details.</h3>
     <div>
@@ -16,7 +16,7 @@
             }
             .login-form > div {
                 width: 30em;
-                margin: 0 auto; 
+                margin: 0 auto;
             }
             .login-form div + div {
                 padding-top: 1ex;
@@ -26,12 +26,12 @@
             }
             .login-form .left-inner-addon { position: relative; }
             .login-form .left-inner-addon input { padding-left: 30px; }
-            .login-form .left-inner-addon i { 
+            .login-form .left-inner-addon i {
                 position: absolute; padding: 10px 12px; cursor: default;
             }
             </style>
             {% csrf_token %}
-            
+
             <hr />
             {{ form.as_div }}
             <hr />
@@ -43,8 +43,8 @@
             </form>
         </div>
         </form>
-            
-            
+
+
     </div>
 
 </div>
