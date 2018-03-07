@@ -34,7 +34,7 @@ def index(request):
     c = {}
 
     user = request.user
-    if getattr(user, 'social_auth', None) and user.social_auth.exists():
+    if 'social_auth' in settings.INSTALLED_APPS and getattr(user, 'social_auth', None) and user.social_auth.exists():
         c['can_change_password'] = False
     else:
         c['can_change_password'] = True
