@@ -2,40 +2,27 @@
 
 {% block content %}
 
-<div class="mapgroup">
-    <!-- left column - profile image -->
-    <div class="col-md-1">
-        <div style="height: 66px; width: 66px; border-radius: 32px;
-        border: 0 solid black;
-        overflow: hidden;
-        position: absolute; top: 3px; right: 16px;
-        background: url({{ user.userdata.profile_image }}) no-repeat center center;
-        -webkit-background-size: cover;
-        -moz-background-size: cover;
-        background-size: cover;">
-        </div>
-    </div>
-    <div class="col-md-8">
-        <h1 style="margin-top: 0; width: initial; border-left: 1px solid #b1b3b5; margin-left: -12px; padding-left: 12px">Hello, {{ user.first_name }}. </h1>
-        <p><!-- user description --> </p>
-
-        <h3>Profile Information</h3>
-        <p>Name: {{ user.get_full_name }}</p>
-        <p>Preferred Name: {{ user.get_short_name }}</p>
-        <p>email: {{ user.email|default:"<i style='color:red'>No Email Address</i>" }}</p>
-        <p>
-        <a class="btn btn-success" href="{% url 'account:edit' %}">Edit my info</a>
-        {% if can_change_password %}
-        <a class="btn btn-success" href="{% url 'account:change_password' %}">Change my password</a>
-        {% endif %}
-        </p>
-        <p>
-        {% if user.is_superuser %}
-            <a class="btn btn-success" href="{{ admin_url }}">Go to the Django admin page</a>
-        {% endif %}
-        {% if user.is_staff %}
-            <a class="btn btn-success" href="/admin">Go to the CMS admin page</a>
-        {% endif %}
+<div class="container mapgroup profile-wrap">
+    <div class="row justify-content-md-center">
+        <div class="col-md-9">
+            <div class="profile-img">{{ user.userdata.profile_image }}</div>
+            <h1>{{ user.first_name }}</h1>
+            <p>{{ user.get_full_name }}</p>
+            <p>{{ user.get_short_name }}</p>
+            <p>{{ user.email|default:"<i style='color:red'>No Email Address</i>" }}</p>
+            <p>
+            <a class="btn btn-success" href="{% url 'account:edit' %}">Edit my info</a>
+            {% if can_change_password %}
+            <a class="btn btn-success" href="{% url 'account:change_password' %}">Change my password</a>
+            {% endif %}
+            </p>
+            <p>
+            {% if user.is_superuser %}
+                <a class="btn btn-success" href="{{ admin_url }}">Go to the Django admin page</a>
+            {% endif %}
+            {% if user.is_staff %}
+                <a class="btn btn-success" href="/admin">Go to the CMS admin page</a>
+            {% endif %}
         </p>
 
         <!-- no need to verify anymore

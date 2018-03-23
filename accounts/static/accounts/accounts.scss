@@ -2,7 +2,30 @@
 SCSS for the accounts module.
 It's assumed that this file will be imported by a master scss file which is
 using bootstrap 3.3
+----
+  (╯°□°）╯︵ ┻━┻
+  TODO: remove assumptions to bootstrap 3.3
+
+  (┛◉Д◉)┛彡┻━┻
+  TODO: remove sass varables that are assigned in differnt "module"
 */
+
+/**
+ * =========================================================================
+   Variables
+ ===========================================================================
+ */
+$dark-gray: #333 !default;
+$green: #10f145;
+ /**
+  * =========================================================================
+    Login Page
+  ===========================================================================
+  */
+
+.row {
+
+}
 
 div.login {
     border: 1px solid $dark-gray;
@@ -51,3 +74,32 @@ form.login-form {
     }
 }
 
+/**
+ * =========================================================================
+   Profile Page
+ ===========================================================================
+ */
+
+.profile-wrap p,
+.profile-wrap h1 {
+    margin-bottom: 0;
+}
+
+.profile-wrap p:not(:empty),
+.profile-wrap h1:not(:empty) {
+    margin-bottom: 1.5em;
+}
+
+.profile-img:not(:empty) {
+    height: 4rem;
+    width: 4rem;
+    border-radius: 50%;
+    position: absolute;
+    top: 3px;
+    right: 16px;
+}
+
+.profile-wrap h1:not(:empty) {
+    border-left: 1px solid #b1b3b5;
+    margin-top: 0;
+}
