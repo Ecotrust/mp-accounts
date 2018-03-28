@@ -34,7 +34,9 @@
             <a class="btn btn-success" href="{{ admin_url }}">Go to the Django admin page</a>
         {% endif %}
         {% if user.is_staff %}
-            <a class="btn btn-success" href="/admin">Go to the CMS admin page</a>
+          {% if cms_admin_button %}
+            <a class="btn btn-success" href="/{{cms_url}}">Go to the CMS admin page</a>
+          {% endif %}
         {% endif %}
         </p>
 

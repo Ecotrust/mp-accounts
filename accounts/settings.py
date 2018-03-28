@@ -13,6 +13,8 @@ REGISTRATION_FORM_FIELDS = {
 LOG_IN_WITH_EMAIL = True
 
 ADMIN_URL = None
+CMS_ADMIN_BUTTON = True
+CMS_URL = 'admin'
 
 # authentication
 

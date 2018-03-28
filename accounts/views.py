@@ -45,6 +45,9 @@ def index(request):
         # Leftover wagtail workaround - both it and django wanted 'admin'
         c['admin_url'] = "/django-admin"
 
+    c['cms_admin_button'] = settings.CMS_ADMIN_BUTTON
+    c['cms_url'] = settings.CMS_URL
+
     return render(request, 'accounts/index.html', c)
 
 
