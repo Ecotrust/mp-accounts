@@ -11,17 +11,19 @@
             <p>{{ user.get_short_name }}</p>
             <p>{{ user.email|default:"<i style='color:red'>No Email Address</i>" }}</p>
             <p>
-            <a class="btn btn-success" href="{% url 'account:edit' %}">Edit my info</a>
-            {% if can_change_password %}
-            <a class="btn btn-success" href="{% url 'account:change_password' %}">Change my password</a>
-            {% endif %}
+                <a class="btn btn-success" href="{% url 'account:edit' %}">Edit my info</a>
+                {% if can_change_password %}
+                    <a class="btn btn-success" href="{% url 'account:change_password' %}">Change my password</a>
+                {% endif %}
             </p>
             <p>
             {% if user.is_superuser %}
                 <a class="btn btn-success" href="{{ admin_url }}">Go to the Django admin page</a>
             {% endif %}
             {% if user.is_staff %}
-                <a class="btn btn-success" href="/admin">Go to the CMS admin page</a>
+                {% if cms_admin_button %}
+                    <a class="btn btn-success" href="/{{cms_url}}">Go to the CMS admin page</a>
+                {% endif %}
             {% endif %}
         </p>
 
