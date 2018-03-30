@@ -1,7 +1,7 @@
 import os
 from setuptools import setup
 
-with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme: 
+with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme:
     README = readme.read()
 
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
@@ -15,9 +15,9 @@ setup(
     license='TBD',
     description='Account Management',
     long_description=README,
-    url='http://www.pointnineseven.com/path/to/opensource/info',
-    author='Point97, LLC',
-    author_email='nobody@pointnineseven.com',
+    url='https://github.com/Ecotrust/mp-accounts',
+    author='Ecotrust',
+    author_email='ksdev@ecotrust.org',
     classifiers=[
         'Environment :: Web Development',
         'Framework :: Django',

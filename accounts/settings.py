@@ -116,7 +116,7 @@ SERVER_EMAIL = 'noreply@ecotrust.org'
 
 FORGOT_EMAIL_SUBJECT = 'Password Reset Request'
 
-
+NOCAPTCHA = True
 RECAPTCHA_PUBLIC_KEY = 'Manage Recaptcha via Google Account to get public key'
 RECAPTCHA_PRIVATE_KEY = 'SetInLocalSettings'
 ### END MP-ACCOUNTS SETTINGS ###
