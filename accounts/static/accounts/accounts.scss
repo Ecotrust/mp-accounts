@@ -82,6 +82,50 @@ $black: #000 !default;
 
 /**
  * =========================================================================
+   Registration
+ ===========================================================================
+ */
+
+.accounts-form-wrap {
+    border: 1px solid #22408f;
+    margin: 1em 10em;
+    padding: 0 3em
+}
+
+#form-begin {
+    text-align: center;
+}
+
+.login-form {
+    margin-bottom: 1em;
+}
+.login-form > div {
+    width: 30em;
+    margin: 0 auto;
+}
+.login-form div + div {
+    padding-top: 1ex;
+}
+.login-form .form-control {
+    color: black;
+}
+.login-form {
+
+    .left-inner-addon {
+        position: relative;
+
+        input { padding-left: 30px; }
+
+        i {
+            position: absolute;
+            padding: 10px 12px;
+            cursor: default;
+        }
+    }
+}
+
+/**
+ * =========================================================================
    Profile Page
  ===========================================================================
  */

@@ -214,7 +214,6 @@ class ChangePasswordView(FormView):
 def register(request):
     """Show the registration page.
     """
-
     if not request.user.is_anonymous():
         return HttpResponseRedirect('/')
 
@@ -265,8 +264,15 @@ def register(request):
 
     c = {
         'form': form,
+        'registration_form': form,
         'social_options': settings.SOCIAL_AUTH_LOGIN_OPTIONS,
     }
+
+    # should social login opitons show on page
+    if 'social_auth' in settings.INSTALLED_APPS and getattr(request.user, 'social_auth', None) and request.user.social_auth.exists():
+        c['allow_social_login'] = True
+    else:
+        c['allow_social_login'] = False
 
     return render(request, 'accounts/register.html', c)
 
