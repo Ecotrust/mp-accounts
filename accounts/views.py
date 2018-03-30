@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.sessions.models import Session
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from django.http.response import Http404, HttpResponseRedirect
+from django.http.response import Http404, HttpResponseRedirect, JsonResponse
 from django.contrib.auth import authenticate, login
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.template.loader import get_template
@@ -50,13 +50,16 @@ def index(request):
 
     return render(request, 'accounts/index.html', c)
 
-
-def login_page(request, return_template='accounts/login.html', c={}):
-    """The login view. Served from index()
-    """
+def login_logic(request, c={}):
     User = get_user_model()
-
     next_page = request.GET.get('next', '/')
+    c['next']=quote(next_page)
+
+    # should social login opitons show on page
+    if 'social_auth' in settings.INSTALLED_APPS and getattr(request.user, 'social_auth', None) and request.user.social_auth.exists():
+        c['allow_social_login'] = True
+    else:
+        c['allow_social_login'] = False
 
     if request.method == 'POST':
         form = LogInForm(request.POST)
@@ -82,43 +85,39 @@ def login_page(request, return_template='accounts/login.html', c={}):
                 except User.DoesNotExist:
                     form = LogInForm()
                     form.cleaned_data = {}
-
                     form.add_error('password', "Your login information does not match our records. Try again or click 'I forgot my password' below.")
-                    c['next']=quote(next_page)
                     c['form']=form
-                    return render(request, templates_object['unknown_user'], c)
+                    return c
 
                 user = authenticate(username=user.username, password=p)
 
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return HttpResponseRedirect(next_page)
+                    c['success'] = True
+                    return c
                 else:
                     form = LogInForm()
                     form.cleaned_data = {}
-
                     form.add_error('email', "Your email address is incorrect")
                     form.add_error('password', "Your password is incorrect")
-                    c['next']=quote(next_page)
                     c['form']=form
-                    return render(request, return_template, c)
+                    return c
             else:
                 form = LogInForm()
                 form.cleaned_data = {}
 
                 form.add_error('password', "Your login information does not match our records. Try again or click 'I forgot my password' below.")
-                c['next']=quote(next_page)
                 c['form']=form
-                return render(request, return_template, c)
+                return c
         else:
             form = LogInForm()
             form.cleaned_data = {}
 
             form.add_error('email', "Please try again")
-            c['next']=quote(next_page)
             c['form']=form
-            return render(request, return_template, c)
+            return c
+
     else:
         form = LogInForm()
 
@@ -126,11 +125,23 @@ def login_page(request, return_template='accounts/login.html', c={}):
 
     # c = dict(GPLUS_ID=settings.SOCIAL_AUTH_GOOGLE_PLUS_KEY,
     #          GPLUS_SCOPE=' '.join(settings.SOCIAL_AUTH_GOOGLE_PLUS_SCOPES),
-    c['next']=quote(next_page)
     c['form']=form
 
-    return render(request, return_template, c)
+    return c
 
+def login_async(request):
+    login_user = login_logic(request) # run default logic
+    json = {
+        'next': login_user['next'],
+        'success': login_user['success'],
+    }
+    return JsonResponse(json)
+
+def login_page(request, return_template='accounts/login.html', c={}):
+    """The login view. Served from index()
+    """
+    login_user = login_logic(request, c) # run default logic
+    return render(request, return_template, login_user)
 
 @decorate_view(login_required)
 class UserDetailView(FormView):

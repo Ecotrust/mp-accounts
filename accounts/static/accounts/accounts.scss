@@ -7,7 +7,7 @@ using bootstrap 3.3
   TODO: remove assumptions to bootstrap 3.3
 
   (┛◉Д◉)┛彡┻━┻
-  TODO: remove sass varables that are assigned in differnt "module"
+  {DONE} TODO: remove sass varables that are assigned in differnt "module"
 */
 
 /**
@@ -16,60 +16,66 @@ using bootstrap 3.3
  ===========================================================================
  */
 $dark-gray: #333 !default;
-$green: #10f145;
+$green: #10f145 !default;
+$black: #000 !default;
+
  /**
   * =========================================================================
     Login Page
   ===========================================================================
   */
 
-.row {
+.accounts {
 
-}
-
-div.login {
-    border: 1px solid $dark-gray;
-    margin: 1em 10em;
-    padding: 3em;
-
-    h2 {
-        color: $green;
-        text-align: center;
-    }
-}
-
-form.login-form {
-    margin-bottom: 1em;
-
-    > div {
-        width: 30em;
-        margin: 0 auto;
-    }
-
-    > div + div {
-        padding-top: 1ex;
-    }
-
-    .social-login {
-        margin: 1em auto;
-        text-align: center;
-    }
-
-
-    .form-control {
+    input {
+        background: transparent;
+        border: none;
         color: $black;
     }
 
-    .left-inner-addon {
-        position: relative;
-        input {
-            padding-left: 30px;
+    .login {
+        border: 1px solid $dark-gray;
+        margin: 1em 10em;
+        padding: 3em;
+
+        h2 {
+            color: $green;
+            text-align: center;
         }
 
-        i {
-            position: absolute;
-            padding: 10px 12px;
-            cursor: default;
+    .login-form {
+        margin-bottom: 1em;
+
+        > div {
+            width: 30em;
+            margin: 0 auto;
+        }
+
+        > div + div {
+            padding-top: 1ex;
+        }
+
+        .social-login {
+            margin: 1em auto;
+            text-align: center;
+        }
+
+
+        .form-control {
+            color: $black;
+        }
+
+        .left-inner-addon {
+            position: relative;
+            input {
+                padding-left: 30px;
+            }
+
+            i {
+                position: absolute;
+                padding: 10px 12px;
+                cursor: default;
+            }
         }
     }
 }
@@ -90,6 +96,12 @@ form.login-form {
     margin-bottom: 1.5em;
 }
 
+.profile-wrap h1:not(:empty) {
+    display: inline-block;
+    margin-top: 0;
+    vertical-align: middle;
+}
+
 .profile-img:not(:empty) {
     height: 4rem;
     width: 4rem;
@@ -97,9 +109,4 @@ form.login-form {
     position: absolute;
     top: 3px;
     right: 16px;
-}
-
-.profile-wrap h1:not(:empty) {
-    border-left: 1px solid #b1b3b5;
-    margin-top: 0;
 }

@@ -1,12 +1,13 @@
 from django.conf.urls import url
 from django.conf import settings
 from django.views.generic import RedirectView
-from accounts.views import UserDetailView, ChangePasswordView, index, register, forgot, forgot_reset, social_confirm, verify_new_email, verify_email
+from accounts.views import UserDetailView, ChangePasswordView, index, register, forgot, forgot_reset, social_confirm, verify_new_email, verify_email, login_async, login_page
 from django.contrib.auth.views import logout
 
 urlpatterns = [
-    url(r'^login/$', RedirectView.as_view(pattern_name='account:index'),
-        name='login'),
+    url(r'^login/$', RedirectView.as_view(pattern_name='account:index'), name='login'),
+    url(r'^login_page/$', login_page, name="login_page"),
+    url(r'^login_async/$', login_async, name='login_async'),
     url(r'^logout/$', logout, {'next_page': '/'},
         name='logout'),
     url(r'^register/$', register, name='register'),

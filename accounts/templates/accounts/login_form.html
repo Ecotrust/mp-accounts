@@ -1,0 +1,41 @@
+{% load static %}
+
+<div class="login accounts">
+    <section class="login-intro-wrap">
+        <h2>{{ login_title|default:"Log in."}}</h2>
+        <p>{{ login_intro|default:"Anyone can join the MARCO Portal &mdash; <a href=&quot;{% url &#39;account:register&#39; %}&quot;>becoming a member</a> allows you to join and create interest groups, custom data layers, and share map views with your collaborators." }}</p>
+    </section>
+    <section class="login-form-wrap">
+        <form class="login-form sign-in" method="POST" action="{% url 'account:index' %}{% if next %}?next={{ next }}{% endif %}">
+            {% csrf_token %}
+
+            {{ form.as_div }}
+
+            {% if allow_social_login %}
+                <div class="social-login">
+                    <p>or log in with</p>
+                    <a class="fa-stack fa-lg" href="{% url 'social:begin' 'twitter' %}?next={{ next }}">
+                        <i class="fa fa-circle fa-stack-2x green"></i>
+                        <i class="fa fa-twitter fa-stack-1x white"></i>
+                    </a>
+                    <a class="fa-stack fa-lg" href="{% url 'social:begin' 'facebook' %}?next={{ next }}">
+                        <i class="fa fa-circle fa-stack-2x green"></i>
+                        <i class="fa fa-facebook fa-stack-1x white"></i>
+                    </a>
+                </div>
+            {% endif %}
+
+            <div class="login-btn-wrap" class="text-center">
+                <input type="submit" class="login-btn" value="Login" />
+            </div>
+        </form>
+    </section>
+
+    <section class="login-help-wrap">
+        <p class="text-center">
+            <a href="{% url 'account:forgot_password' %}">I forgot my password</a>
+            &bull; <a href="{% url 'account:register' %}">I want to register</a>
+            &bull; <a href="/help/">Help</a>
+        </p>
+    </section>
+</div>
