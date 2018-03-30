@@ -290,11 +290,11 @@ def register_page(request, c={}):
     template =  c['template']
     return render(request, template, register_user)
 
-def register(request):
+def register(request, c={}):
     if not request.user.is_anonymous():
         return HttpResponseRedirect('/')
     register_user = register_logic(request, c) # run default logic
-    template =  c['template']
+    template =  register_user['template']
     return render(request, template, register_user)
 
 @login_required
