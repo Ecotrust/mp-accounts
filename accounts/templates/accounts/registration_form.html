@@ -19,7 +19,7 @@
     </div>
 
     <section class="form-wrap">
-        <form class="login-form" id="register-form" method="POST" action="{% url 'account:register' %}#form-begin">
+        <form class="login-form sign-up" id="register-form" method="POST" action="{% url 'account:register' %}{% if next %}?next={{ next }}{% endif %}">
             {% csrf_token %}
             {% if registration_form %}
                 {{ registration_form.as_div }}

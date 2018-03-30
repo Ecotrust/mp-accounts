@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from django.conf import settings
 from django.views.generic import RedirectView
-from accounts.views import UserDetailView, ChangePasswordView, index, register, forgot, forgot_reset, social_confirm, verify_new_email, verify_email, login_async, login_page
+from accounts.views import UserDetailView, ChangePasswordView, register, index, forgot, forgot_reset, social_confirm, verify_new_email, verify_email, login_async, login_page, register_page, register_async
 from django.contrib.auth.views import logout
 
 urlpatterns = [
@@ -11,6 +11,8 @@ urlpatterns = [
     url(r'^logout/$', logout, {'next_page': '/'},
         name='logout'),
     url(r'^register/$', register, name='register'),
+    url(r'^register_page/$', register_page, name='register_page'),
+    url(r'^register_async/$', register_async, name='register_async'),
     url(r'^edit/$', UserDetailView.as_view(), name='edit'),
     url(r'^forgot/$', forgot, name='forgot_password'),
     url(r'^forgot/(?P<code>[a-f0-9]{32})$', forgot_reset,

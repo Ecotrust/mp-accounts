@@ -211,12 +211,7 @@ class ChangePasswordView(FormView):
 
         return super(FormView, self).form_valid(form)
 
-def register(request):
-    """Show the registration page.
-    """
-    if not request.user.is_anonymous():
-        return HttpResponseRedirect('/')
-
+def register_logic(request, c={}):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -239,7 +234,9 @@ def register(request):
             if not created:
                 # This may happen if the form is submitted outside the normal
                 # login flow with a user that already exists
-                return render(request, 'accounts/registration_error.html')
+                c['request'] = request
+                c['template'] = 'accounts/registration_error.html'
+                return c
 
             user.is_active = True
             user.set_password(password)
@@ -257,16 +254,19 @@ def register(request):
 
             apply_user_permissions(user)
             # verify_email_address(request, user)
-
-            return render(request, 'accounts/success.html')
+            c['request'] = request
+            c['success'] = True
+            c['template'] = 'accounts/success.html'
+            return c
     else:
         form = SignUpForm()
 
-    c = {
-        'form': form,
-        'registration_form': form,
-        'social_options': settings.SOCIAL_AUTH_LOGIN_OPTIONS,
-    }
+    c['form'] = form
+    c['next'] = '#form-begin'
+    c['registration_form'] = form
+    c['social_options'] = settings.SOCIAL_AUTH_LOGIN_OPTIONS
+    c['request'] = request
+    c['template'] = 'accounts/register.html'
 
     # should social login opitons show on page
     if 'social_auth' in settings.INSTALLED_APPS and getattr(request.user, 'social_auth', None) and request.user.social_auth.exists():
@@ -274,8 +274,28 @@ def register(request):
     else:
         c['allow_social_login'] = False
 
-    return render(request, 'accounts/register.html', c)
+    return c
 
+def register_async(request):
+    register_user = register_logic(request) # run default logic
+    json = {
+        'async': 'yes',
+    }
+    return JsonResponse(json)
+
+def register_page(request, c={}):
+    """The register view.
+    """
+    register_user = register_logic(request, c) # run default logic
+    template =  c['template']
+    return render(request, template, register_user)
+
+def register(request):
+    if not request.user.is_anonymous():
+        return HttpResponseRedirect('/')
+    register_user = register_logic(request, c) # run default logic
+    template =  c['template']
+    return render(request, template, register_user)
 
 @login_required
 def verify_new_email(request):
