@@ -212,6 +212,8 @@ class ChangePasswordView(FormView):
         return super(FormView, self).form_valid(form)
 
 def register_logic(request, c={}):
+    c['error'] = ''
+    c['success'] = False
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -235,6 +237,8 @@ def register_logic(request, c={}):
                 # This may happen if the form is submitted outside the normal
                 # login flow with a user that already exists
                 c['request'] = request
+                c['username'] = username
+                c['error'] = 'Username already exists'
                 c['template'] = 'accounts/registration_error.html'
                 return c
 
@@ -264,6 +268,7 @@ def register_logic(request, c={}):
     c['form'] = form
     c['next'] = '#form-begin'
     c['registration_form'] = form
+    c['error'] = 'Email already associated with an account'
     c['social_options'] = settings.SOCIAL_AUTH_LOGIN_OPTIONS
     c['request'] = request
     c['template'] = 'accounts/register.html'
@@ -280,6 +285,8 @@ def register_async(request):
     register_user = register_logic(request) # run default logic
     json = {
         'async': 'yes',
+        'success': register_user['success'],
+        'error': register_user['error'],
     }
     return JsonResponse(json)
 
