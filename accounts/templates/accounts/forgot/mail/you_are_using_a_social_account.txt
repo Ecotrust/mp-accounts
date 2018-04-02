@@ -1,15 +1,15 @@
 Dear {{ name }},
 
-Our records indicate that this email address used {{ auth_provider_name }} to sign in. When using {{ auth_provider_name }} to sign in, you are not required to enter a password. 
+Our records indicate that this email address used {{ auth_provider_name }} to sign in. When using {{ auth_provider_name }} to sign in, you are not required to enter a password.
 
-To log in, go to {{ site_url }} and click on "LOG IN" (on the upper-right side of the screen), and click on the "Sign in with {{ auth_provider_name }}" button. 
+To log in, go to {{ site_url }} and click on "LOG IN" (on the upper-right side of the screen), and click on the "Sign in with {{ auth_provider_name }}" button.
 
-During this process you may be asked to enter your {{ auth_provider_name }} account password. 
+During this process you may be asked to enter your {{ auth_provider_name }} account password.
 
 If you did not request this, then no action is required.
 
-Regards, 
+Regards,
 
-MARCO Portal Team
-info@ < marco portal web site >
-http://midatlanticoceans.org
+{{ project_name }} Support Team
+{{ team_email }}
+{{ project_site }}

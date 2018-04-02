@@ -113,6 +113,8 @@ SOCIAL_AUTH_PIPELINE = (
 EMAIL_HOST_USER = 'noreply@ecotrust.org'
 DEFAULT_FROM_EMAIL = 'noreply@ecotrust.org'
 SERVER_EMAIL = 'noreply@ecotrust.org'
+PROJECT_SITE = 'http://portal.midatlanticocean.org'
+PROJECT_NAME = 'Mid-Atlantic Portal'
 
 FORGOT_EMAIL_SUBJECT = 'Password Reset Request'
 

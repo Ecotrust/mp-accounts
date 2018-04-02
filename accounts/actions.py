@@ -64,6 +64,8 @@ def send_password_reset_email(request, user):
         'name': user.get_short_name(),
         'url': url,
         'team_email': settings.DEFAULT_FROM_EMAIL,
+        'project_name': settings.PROJECT_NAME,
+        'project_site': settings.PROJECT_SITE
     }
 
     template = get_template('accounts/forgot/mail/password_reset.txt')
