@@ -5,7 +5,7 @@
 <div class="container mapgroup profile-wrap">
     <div class="row justify-content-md-center">
         <div class="col-md-9">
-            <div class="profile-img">{{ user.userdata.profile_image }}</div>
+            <div class="profile-img"><img src="{{ user.userdata.profile_image }}"/></div>
             <h1>{{ user.first_name }}</h1>
             <p>{{ user.get_full_name }}</p>
             <p>{{ user.get_short_name }}</p>
