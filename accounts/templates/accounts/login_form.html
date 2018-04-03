@@ -32,8 +32,8 @@
     </section>
 
     <section class="login-help-wrap">
-        <a href="{% url 'account:forgot_password' %}">{{ forgot_password_link|default:"I forgot my password &bull;" }}</a>
+        <a href="{% url 'account:forgot_password' %}" target="_blank">{{ forgot_password_link|default:"I forgot my password &bull;" }}</a>
         <a href="{% url 'account:register' %}">{{ register_link|default:"I want to register &bull;" }}</a>
-        <a href="/help/">{{ help_link|default:"Help" }}</a>
+        <a href="/help/" target="_blank">{{ help_link|default:"Help" }}</a>
     </section>
 </div>
