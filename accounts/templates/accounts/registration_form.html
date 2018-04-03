@@ -1,7 +1,9 @@
 {% load static %}
 
 <div class="accounts-form-wrap">
-    <h2 id="form-begin">{{ registration_title|default:"Create An Account" }}</h2>
+    <section class="login-intro-wrap">
+        <h2 id="form-begin">{{ registration_title|default:"Create An Account" }}</h2>
+    </section>
 
     <div class="login-form">
         {% if allow_social_login and social_options|length > 0 %}
@@ -27,7 +29,7 @@
                 {{ form.as_div }}
             {% endif %}
 
-            <div class="form-btn-wrap" class="text-center">
+            <div class="form-btn-wrap">
                 <input type="submit" class="btn btn-success login-btn" value="Join" />
             </div>
         </form>

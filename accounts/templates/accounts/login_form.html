@@ -25,17 +25,15 @@
                 </div>
             {% endif %}
 
-            <div class="form-btn-wrap" class="text-center">
+            <div class="form-btn-wrap">
                 <input type="submit" class="btn btn-success login-btn" value="Login" />
             </div>
         </form>
     </section>
 
     <section class="login-help-wrap">
-        <p class="text-center">
-            <a href="{% url 'account:forgot_password' %}">{{ forgot_password_link|default:"I forgot my password" }}</a>
-            <a href="{% url 'account:register' %}">{{ register_link|default:"I want to register" }}</a>
-            <a href="/help/">{{ help_link|default:"Help" }}</a>
-        </p>
+        <a href="{% url 'account:forgot_password' %}">{{ forgot_password_link|default:"I forgot my password &bull;" }}</a>
+        <a href="{% url 'account:register' %}">{{ register_link|default:"I want to register &bull;" }}</a>
+        <a href="/help/">{{ help_link|default:"Help" }}</a>
     </section>
 </div>
