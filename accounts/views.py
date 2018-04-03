@@ -95,6 +95,8 @@ def login_logic(request, c={}):
                 if user.is_active:
                     login(request, user)
                     c['success'] = True
+                    c['username'] = user.username
+                    c['email'] = user.email
                     return c
                 else:
                     form = LogInForm()
@@ -134,6 +136,8 @@ def login_async(request):
     json = {
         'next': login_user['next'],
         'success': login_user['success'],
+        'username': login_user['username'],
+        'email': login_user['email'],
     }
     return JsonResponse(json)
 
