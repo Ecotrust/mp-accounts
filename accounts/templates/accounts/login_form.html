@@ -2,8 +2,8 @@
 
 <div class="login accounts">
     <section class="login-intro-wrap">
-        <h2>{{ login_title|default:"Log in."}}</h2>
-        <p>{{ login_intro|default:"Anyone can join the MARCO Portal &mdash; <a href=&quot;{% url &#39;account:register&#39; %}&quot;>becoming a member</a> allows you to join and create interest groups, custom data layers, and share map views with your collaborators." }}</p>
+        <h2>{{ login_title|default:"Log in"}}</h2>
+        <p>{{ login_intro|default:"Access your account" }}</p>
     </section>
     <section class="login-form-wrap">
         <form class="login-form sign-in" method="POST" action="{% url 'account:index' %}{% if next %}?next={{ next }}{% endif %}">
@@ -30,7 +30,6 @@
             </div>
         </form>
     </section>
-
     <section class="login-help-wrap">
         <a href="{% url 'account:forgot_password' %}" target="_blank">{{ forgot_password_link|default:"I forgot my password &bull;" }}</a>
         <a href="{% url 'account:register' %}">{{ register_link|default:"I want to register &bull;" }}</a>

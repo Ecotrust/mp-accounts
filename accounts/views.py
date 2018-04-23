@@ -53,7 +53,7 @@ def index(request):
 def login_logic(request, c={}):
     User = get_user_model()
     next_page = request.GET.get('next', '/')
-    c['next']=quote(next_page)
+    c['success'] = False
 
     # should social login opitons show on page
     if 'social_auth' in settings.INSTALLED_APPS and getattr(request.user, 'social_auth', None) and request.user.social_auth.exists():
@@ -127,6 +127,7 @@ def login_logic(request, c={}):
 
     # c = dict(GPLUS_ID=settings.SOCIAL_AUTH_GOOGLE_PLUS_KEY,
     #          GPLUS_SCOPE=' '.join(settings.SOCIAL_AUTH_GOOGLE_PLUS_SCOPES),
+    c['next']=quote(next_page)
     c['form']=form
 
     return c
@@ -134,7 +135,6 @@ def login_logic(request, c={}):
 def login_async(request):
     login_user = login_logic(request) # run default logic
     json = {
-        'next': login_user['next'],
         'success': login_user['success'],
         'username': login_user['username'],
         'email': login_user['email'],
@@ -145,6 +145,9 @@ def login_page(request, return_template='accounts/login.html', c={}):
     """The login view. Served from index()
     """
     login_user = login_logic(request, c) # run default logic
+    if login_user['success']:
+        next_page = request.GET.get('next', '/')
+        return HttpResponseRedirect(next_page)
     return render(request, return_template, login_user)
 
 @decorate_view(login_required)
