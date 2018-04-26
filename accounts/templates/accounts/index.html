@@ -1,21 +1,35 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block site_style %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'accounts/css/style.css' %}"/>
+{% endblock %}
 
 {% block content %}
 
-<div class="container mapgroup profile-wrap">
+<div class="container profile-wrap">
     <div class="row justify-content-md-center">
-        <div class="col-md-9">
-            <div class="profile-img"><img src="{{ user.userdata.profile_image }}"/></div>
-            <h1>{{ user.first_name }}</h1>
-            <p>{{ user.get_full_name }}</p>
-            <p>{{ user.get_short_name }}</p>
-            <p>{{ user.email|default:"<i style='color:red'>No Email Address</i>" }}</p>
-            <p>
+        <div class="col col-md-9">
+            {% if user.userdata.profile_image %}
+                <div class="profile-img"><img src="{{ user.userdata.profile_image }}"/></div>
+            {% endif %}
+            {% if user.first_name %}
+                <h1>{{ user.first_name }}</h1>
+            {% endif %}
+            {% if user.get_full_name %}
+                <p><strong class="reduce-text-size">first &amp; last name:</strong>&nbsp;&nbsp;&nbsp;{{ user.get_full_name }}</p>
+            {% endif %}
+            {% if user.get_short_name %}
+                <p><strong class="reduce-text-size">preferred name:</strong>&nbsp;&nbsp;&nbsp;{{ user.get_short_name }}</p>
+            {% endif %}
+            <p><strong class="reduce-text-size">email address:</strong>&nbsp;&nbsp;&nbsp;{{ user.email|default:"<i style='color:red'>No Email Address</i>" }}</p>
+            <div class="profile-buttons">
                 <a class="btn btn-success" href="{% url 'account:edit' %}">Edit my info</a>
                 {% if can_change_password %}
                     <a class="btn btn-success" href="{% url 'account:change_password' %}">Change my password</a>
                 {% endif %}
-            </p>
+            </div>
             <p>
             {% if user.is_superuser %}
                 <a class="btn btn-success" href="{{ admin_url }}">Go to the Django admin page</a>
@@ -40,17 +54,23 @@
         -->
 
 
-        <h3>Map Groups</h3>
-        <ul style="padding-left: 0">
-            {% for membership in request.user.mapgroupmember_set.all %}
-            <li style="float:left; width: 150px; height: 120px; text-align: center; list-style-type: none; margin-left: 0">
-                 <a href="{{ membership.map_group.get_absolute_url }}">
-                     <img src="{{ membership.map_group.image_url }}" width="124" height="70" style="margin-bottom: 1em;"><br>
-                     {{ membership.map_group.name }}
-                 </a>
-            </li>
-            {% endfor %}
-        </ul>
+        <!-- There are no map groups outside of MidAtlanticPortal org repos
+             map group model and views are currently not included in a marine planner app
+             https://github.com/MidAtlanticPortal/marco-map_groups
+             TODO make decision about included map groups in planner apps
+
+            <h3>Map Groups</h3>
+            <ul style="padding-left: 0">
+                {% for membership in request.user.mapgroupmember_set.all %}
+                <li style="float:left; width: 150px; height: 120px; text-align: center; list-style-type: none; margin-left: 0">
+                     <a href="{{ membership.map_group.get_absolute_url }}">
+                         <img src="{{ membership.map_group.image_url }}" width="124" height="70" style="margin-bottom: 1em;"><br>
+                         {{ membership.map_group.name }}
+                     </a>
+                </li>
+                {% endfor %}
+            </ul>
+        -->
     </div>
     <div class="col-md-3">
         <a class="btn btn-success" href="{% url 'account:logout' %}">Log out</a><br />

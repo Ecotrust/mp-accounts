@@ -1,0 +1,32 @@
+.profile-wrap {
+    display: block;
+    margin: 0 auto;
+    position: relative;
+}
+
+.profile-wrap h1 {
+    display: inline-block;
+    margin-bottom: 1.5em;
+    vertical-align: baseline;
+    line-height: 1;
+}
+
+.profile-img {
+    display: inline-block;
+    max-height: 3rem;
+    max-width: 3rem;
+    vertical-align: text-bottom;
+}
+
+.profile-img img {
+    height: auto;
+    width: 100%;
+}
+
+.reduce-text-size {
+    font-size: .75em;
+}
+
+.profile-buttons {
+    margin: 4em 0 0;
+}
