@@ -1,3 +1,9 @@
+/**
+ * =========================================================================
+   Profile
+ ===========================================================================
+ */
+
 .profile-wrap {
     display: block;
     margin: 0 auto;
@@ -29,4 +35,23 @@
 
 .profile-buttons {
     margin: 4em 0 0;
+}
+
+/**
+ * =========================================================================
+   Login
+ ===========================================================================
+ */
+
+.login-form-wrap,
+.login-help-wrap,
+.form-wrap {
+    display: block;
+    margin: 0 auto;
+    position: relative;
+    max-width: 40em;
+}
+
+form.login-form div {
+    margin-bottom: 1em;
 }
