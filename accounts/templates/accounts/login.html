@@ -2,8 +2,8 @@
 {% load static %}
 
 {% block site_style %}
-    {{ block.super }}
     <link rel="stylesheet" href="{% static 'accounts/css/style.css' %}"/>
+    {{ block.super }}
 {% endblock %}
 
 {% block stylesheets %}

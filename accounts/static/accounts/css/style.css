@@ -1,5 +1,21 @@
 /**
  * =========================================================================
+   Variables
+ ===========================================================================
+ */
+@supports(--var: 'value') {
+    /**
+     * variables for future use & reference
+     * no support for css vars in IE  (╯°□°)╯* ┻━┻
+     */
+    :root {
+        --max-width: 44em;
+        --margin-bottom: 1.5rem;
+    }
+}
+
+/**
+ * =========================================================================
    Profile
  ===========================================================================
  */
@@ -34,7 +50,7 @@
 }
 
 .profile-buttons {
-    margin: 4em 0 0;
+    padding-top: 3em;
 }
 
 /**
@@ -49,9 +65,23 @@
     display: block;
     margin: 0 auto;
     position: relative;
-    max-width: 40em;
+    max-width: 44em;
+    max-width: var(--max-width);
 }
 
 form.login-form div {
     margin-bottom: 1em;
+}
+
+/**
+ * =========================================================================
+   Update account
+ ===========================================================================
+ */
+
+.accounts-form-wrap {
+    border: 1px solid blue;
+    margin: 0 auto;
+    max-width: 44em;
+    max-width: var(--max-width);
 }

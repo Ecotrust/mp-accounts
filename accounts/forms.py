@@ -227,4 +227,28 @@ class UserDetailForm(SocialAccountConfirmForm):
     """A form for a user editing their info.
     Currently identical to the Social account confirmation form.
     """
+
+    ### From MidAtlanticPortal mp-accounts ⍾
+    ### RDH: 12/01/2017
+    # We need to allow users to change data without changing their email
+    # We also need to make sure that users still can't steal other user's
+    # emails. For this we need to check both the submitted email and the
+    # request user's email. __init__ gets the user so that it can be used
+    # in clean below
+
+    def __init__(self, user, *args, **kwargs):
+        super(UserDetailForm, self).__init__( *args, **kwargs)
+        self.user = user
+
+    def clean(self):
+        cleaned_data = super(SocialAccountConfirmForm, self).clean()
+        email = cleaned_data.get('email')
+        user_email = self.user.email
+
+        if email.lower() != user_email.lower() and get_user_model().objects.filter(email=email).exists():
+            msg = u"This email address is already in use, please select another"
+            self.add_error("email", msg)
+
+        return cleaned_data
+
     pass

@@ -187,6 +187,17 @@ class UserDetailView(FormView):
 
         return super(FormView, self).form_valid(form)
 
+    # From MidAtlanticPortal mp-accounts ⍾
+    # RDH: 12/01/2017
+    # get_form_kwargs allows us to know the request's user when cleaning the
+    # form. See forms.py for more.
+
+    def get_form_kwargs(self):
+        kwargs = super(UserDetailView, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+
 
 @decorate_view(login_required)
 class ChangePasswordView(FormView):

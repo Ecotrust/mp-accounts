@@ -1,4 +1,10 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block site_style %}
+    <link rel="stylesheet" href="{% static 'accounts/css/style.css' %}"/>
+    {{ block.super }}
+{% endblock %}
 
 {% block content %}
 

@@ -1,15 +1,23 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block site_style %}
+    <link rel="stylesheet" href="{% static 'accounts/css/style.css' %}"/>
+    {{ block.super }}
+{% endblock %}
 
 {% block content %}
 
+<!-- TODO why is there a script tag here? -->
 <script>
 </script>
 
-<div style="border: 1px solid blue; margin: 1em 10em; padding: 3em" class="accounts-form-wrap">
+<div class="accounts-form-wrap">
     <h2 style="text-align: center;">Hello, {{ user.get_short_name }}</h2>
     <h3 style="text-align: center;">Update your account details.</h3>
     <div>
         <form class="login-form" method="POST" action="{% url 'account:edit' %}">
+            <!-- TODO why is style declared here? -->
             <style>
             .login-form {
                 margin-bottom: 1em;
