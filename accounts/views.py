@@ -278,6 +278,8 @@ def register_logic(request, c={}):
             # verify_email_address(request, user)
             c['request'] = request
             c['success'] = True
+            c['request'] = request
+            c['username'] = username
             c['template'] = 'accounts/success.html'
             return c
     else:
@@ -305,8 +307,35 @@ def register_async(request):
         'async': 'yes',
         'success': register_user['success'],
         'error': register_user['error'],
+        'username': register_user['username'],
+        'request': register_user['request'],
     }
     return JsonResponse(json)
+
+def register_login_async(request):
+    register_user = register_logic(request) # run default logic
+    if register_user['success']:
+        c = {}
+        username = request.POST['username']
+        p = request.POST['password']
+        user = authenticate(username=username, password=p)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                json = {
+                    'async': 'yes',
+                    'success': True,
+                    'error': register_user['error'],
+                    'username': user.username,
+                }
+                return JsonResponse(json)
+    else:
+        json = {
+            'async': 'yes',
+            'success': register_user['success'],
+            'error': register_user['error'],
+        }
+        return JsonResponse(json)
 
 def register_page(request, c={}):
     """The register view.
