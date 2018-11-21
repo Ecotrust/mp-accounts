@@ -25,7 +25,7 @@ from accounts.actions import apply_user_permissions, send_password_reset_email,\
 from nursery.view_helpers import decorate_view
 
 
-def index(request):
+def index(request, template=None):
     """Serve up the primary account view, or the login view if not logged in
     """
     if request.user.is_anonymous():
@@ -48,7 +48,16 @@ def index(request):
     c['cms_admin_button'] = settings.CMS_ADMIN_BUTTON
     c['cms_url'] = settings.CMS_URL
 
-    return render(request, 'accounts/index.html', c)
+    if not template:
+        try:
+            template = settings.ACCOUNTS_TEMPLATES['index']
+        except Exception as e:
+            print('ERROR: NO SETTING FOR ACCOUNTS_TEMPLATES["index"]')
+            pass
+    if not template:
+        template = 'accounts/index.html'
+
+    return render(request, template, c)
 
 def login_logic(request, c={}):
     User = get_user_model()
@@ -141,18 +150,34 @@ def login_async(request):
     }
     return JsonResponse(json)
 
-def login_page(request, return_template='accounts/login.html', c={}):
+def login_page(request, return_template=None, c={}):
     """The login view. Served from index()
     """
     login_user = login_logic(request, c) # run default logic
     if login_user['success']:
         next_page = request.GET.get('next', '/')
         return HttpResponseRedirect(next_page)
+
+    if not return_template:
+        try:
+            return_template = settings.ACCOUNTS_TEMPLATES['login']
+        except Exception as e:
+            print('ERROR: NO SETTING FOR ACCOUNTS_TEMPLATES["login"]')
+            pass
+    if not return_template:
+        return_template = 'accounts/login.html'
+
     return render(request, return_template, login_user)
 
 @decorate_view(login_required)
 class UserDetailView(FormView):
-    template_name = 'accounts/user_detail_form.html'
+    try:
+        template_name = settings.ACCOUNTS_TEMPLATES['user_detail_form']
+    except Exception as e:
+        print('ERROR: NO SETTING FOR ACCOUNTS_TEMPLATES["user_detail_form"]')
+        pass
+    if not template_name:
+        template_name = 'accounts/user_detail_form.html'
     form_class = UserDetailForm
     success_url = reverse_lazy('account:index')
 
@@ -201,7 +226,13 @@ class UserDetailView(FormView):
 
 @decorate_view(login_required)
 class ChangePasswordView(FormView):
-    template_name = 'accounts/change_password_form.html'
+    try:
+        template_name = settings.ACCOUNTS_TEMPLATES['change_password_form']
+    except Exception as e:
+        print('ERROR: NO SETTING FOR ACCOUNTS_TEMPLATES["change_password_form"]')
+        pass
+    if not template_name:
+        template_name = 'accounts/change_password_form.html'
     form_class = ChangePasswordForm
     success_url = reverse_lazy('account:index')
 
@@ -229,7 +260,7 @@ class ChangePasswordView(FormView):
 
         return super(FormView, self).form_valid(form)
 
-def register_logic(request, c={}):
+def register_logic(request, c={}, template=None):
     c['error'] = ''
     c['success'] = False
     if request.method == 'POST':
@@ -257,7 +288,15 @@ def register_logic(request, c={}):
                 c['request'] = request
                 c['username'] = username
                 c['error'] = 'Username already exists'
-                c['template'] = 'accounts/registration_error.html'
+                if not template:
+                    try:
+                        template = settings.ACCOUNTS_TEMPLATES['registration_error']
+                    except Exception as e:
+                        print('ERROR: NO SETTING FOR ACCOUNTS_TEMPLATES["registration_error"]')
+                        pass
+                if not template:
+                    template = 'accounts/registration_error.html'
+                c['template'] = template
                 return c
 
             user.is_active = True
@@ -280,7 +319,15 @@ def register_logic(request, c={}):
             c['success'] = True
             c['request'] = request
             c['username'] = username
-            c['template'] = 'accounts/success.html'
+            if not template:
+                try:
+                    template = settings.ACCOUNTS_TEMPLATES['success']
+                except Exception as e:
+                    print('ERROR: NO SETTING FOR ACCOUNTS_TEMPLATES["success"]')
+                    pass
+            if not template:
+                template = 'accounts/success.html'
+            c['template'] = template
             return c
     else:
         form = SignUpForm()
@@ -291,7 +338,15 @@ def register_logic(request, c={}):
     c['error'] = 'Email already associated with an account'
     c['social_options'] = settings.SOCIAL_AUTH_LOGIN_OPTIONS
     c['request'] = request
-    c['template'] = 'accounts/register.html'
+    if not template:
+        try:
+            template = settings.ACCOUNTS_TEMPLATES['register']
+        except Exception as e:
+            print('ERROR: NO SETTING FOR ACCOUNTS_TEMPLATES["register"]')
+            pass
+    if not template:
+        template = 'accounts/register.html'
+    c['template'] = template
 
     # should social login opitons show on page
     if 'social_auth' in settings.INSTALLED_APPS and getattr(request.user, 'social_auth', None) and request.user.social_auth.exists():
@@ -352,16 +407,25 @@ def register(request, c={}):
     return render(request, template, register_user)
 
 @login_required
-def verify_new_email(request):
+def verify_new_email(request, template=None):
     if request.method != 'POST':
         raise Http404()
 
     verify_email_address(request, request.user, False)
 
-    return render(request, 'accounts/check_your_email.html')
+    if not template:
+        try:
+            template = settings.ACCOUNTS_TEMPLATES['check_your_email']
+        except Exception as e:
+            print('ERROR: NO SETTING FOR ACCOUNTS_TEMPLATES["check_your_email"]')
+            pass
+    if not template:
+        template = 'accounts/check_your_email.html'
+
+    return render(request, template)
 
 
-def social_confirm(request):
+def social_confirm(request, template=None):
     data = request.session.get('partial_pipeline')
     if not data['backend']:
         raise HttpResponseRedirect('/')
@@ -417,7 +481,16 @@ def social_confirm(request):
         'backend': data['backend'],
     }
 
-    return render(request, 'accounts/social_confirm.html', c)
+    if not template:
+        try:
+            template = settings.ACCOUNTS_TEMPLATES['social_confirm']
+        except Exception as e:
+            print('ERROR: NO SETTING FOR ACCOUNTS_TEMPLATES["social_confirm"]')
+            pass
+    if not template:
+        template = 'accounts/social_confirm.html'
+
+    return render(request, template, c)
 
 
 def verify_email_address(request, user, activate_user=True):
@@ -444,7 +517,7 @@ def verify_email_address(request, user, activate_user=True):
     send_verification_email(request, e)
 
 
-def send_verification_email(request, e):
+def send_verification_email(request, e, text_template=None, html_template=None):
     """Send a verification link to the specified user.
     """
 
@@ -452,15 +525,31 @@ def send_verification_email(request, e):
                                              args=(e.verification_code,)))
 
     context = Context({'name': e.user.get_short_name(), 'url': url, 'host': 'http://portal.midatlanticocean.org'})
-    template = get_template('accounts/mail/verify_email.txt')
+    if not text_template:
+        try:
+            text_template = settings.ACCOUNTS_TEMPLATES['verify_email_txt']
+        except Exception as e:
+            print('ERROR: NO SETTING FOR ACCOUNTS_TEMPLATES["verify_email_txt"]')
+            pass
+    if not text_template:
+        text_template = 'accounts/mail/verify_email.txt'
+    template = get_template(text_template)
     body_txt = template.render(context)
-    template = get_template('accounts/mail/verify_email.html')
+    if not html_template:
+        try:
+            html_template = settings.ACCOUNTS_TEMPLATES['verify_email_html']
+        except Exception as e:
+            print('ERROR: NO SETTING FOR ACCOUNTS_TEMPLATES["verify_email_html"]')
+            pass
+    if not html_template:
+        html_template = 'accounts/mail/verify_email.html'
+    template = get_template(html_template)
     body_html = template.render(context)
     e.user.email_user('Please verify your email address', body_txt,
                       html_message=body_html, fail_silently=False)
 
 
-def verify_email(request, code):
+def verify_email(request, code, template=None):
     """Check for an email verification code in the querystring
     """
 
@@ -474,7 +563,16 @@ def verify_email(request, code):
     e.user.userdata.save()
     e.user.save()
     e.delete()
-    return render(request, 'accounts/verify_email_success.html')
+    if not template:
+        try:
+            template = settings.ACCOUNTS_TEMPLATES['verify_email_success']
+        except Exception as e:
+            print('ERROR: NO SETTING FOR ACCOUNTS_TEMPLATES["verify_email_success"]')
+            pass
+    if not template:
+        template = 'accounts/verify_email_success.html'
+
+    return render(request, template)
 
 
 def all_logged_in_users():
@@ -491,7 +589,7 @@ def all_logged_in_users():
 
 
 @user_passes_test(lambda x: x.is_superuser)
-def debug_page(request):
+def debug_page(request, template=None):
     """Serve up the primary account view, or the login view if not logged in
     """
     if request.user.is_anonymous():
@@ -503,10 +601,19 @@ def debug_page(request):
         c['users'] = get_user_model().objects.all()
         c['sessions'] = all_logged_in_users()
 
-    return render(request, 'accounts/debug.html', c)
+    if not template:
+        try:
+            template = settings.ACCOUNTS_TEMPLATES['debug']
+        except Exception as e:
+            print('ERROR: NO SETTING FOR ACCOUNTS_TEMPLATES["debug"]')
+            pass
+    if not template:
+        template = 'accounts/debug.html'
+
+    return render(request, template, c)
 
 
-def forgot(request):
+def forgot(request, template=None):
     """Sends a password reset link to a user's validated email address. If
     the email address isn't validated, do nothing (?)
     """
@@ -537,17 +644,36 @@ def forgot(request):
             except User.DoesNotExist:
                 pass
 
-            return render(request, 'accounts/forgot/wait_for_email.html')
+            if not template:
+                try:
+                    template = settings.ACCOUNTS_TEMPLATES['wait_for_email']
+                except Exception as e:
+                    print('ERROR: NO SETTING FOR ACCOUNTS_TEMPLATES["wait_for_email"]')
+                    pass
+            if not template:
+                template = 'accounts/forgot/wait_for_email.html'
+
+            return render(request, template)
     else:
         form = ForgotPasswordForm()
 
     c = {
         'form': form,
     }
-    return render(request, 'accounts/forgot/forgot.html', c)
+
+    if not template:
+        try:
+            template = settings.ACCOUNTS_TEMPLATES['forgot']
+        except Exception as e:
+            print('ERROR: NO SETTING FOR ACCOUNTS_TEMPLATES["forgot"]')
+            pass
+    if not template:
+        template = 'accounts/forgot/forgot.html'
+
+    return render(request, template, c)
 
 
-def forgot_reset(request, code):
+def forgot_reset(request, code, template=None):
     """Allows a user who has clicked on a validation link to reset their
     password.
     """
@@ -573,7 +699,16 @@ def forgot_reset(request, code):
 
             e.delete()
 
-            return render(request, 'accounts/forgot/reset_successful.html')
+            if not template:
+                try:
+                    template = settings.ACCOUNTS_TEMPLATES['reset_successful']
+                except Exception as e:
+                    print('ERROR: NO SETTING FOR ACCOUNTS_TEMPLATES["reset_successful"]')
+                    pass
+            if not template:
+                template = 'accounts/forgot/reset_successful.html'
+
+            return render(request, template)
 
     else:
         form = ResetPasswordForm()
@@ -582,7 +717,17 @@ def forgot_reset(request, code):
         'form': form,
         'code': code,
     }
-    return render(request, 'accounts/forgot/reset.html', c)
+
+    if not template:
+        try:
+            template = settings.ACCOUNTS_TEMPLATES['reset']
+        except Exception as e:
+            print('ERROR: NO SETTING FOR ACCOUNTS_TEMPLATES["reset"]')
+            pass
+    if not template:
+        template = 'accounts/forgot/reset.html'
+
+    return render(request, template, c)
 
 
 if settings.DEBUG:

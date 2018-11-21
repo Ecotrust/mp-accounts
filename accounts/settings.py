@@ -121,4 +121,24 @@ FORGOT_EMAIL_SUBJECT = 'Password Reset Request'
 NOCAPTCHA = True
 RECAPTCHA_PUBLIC_KEY = 'Manage Recaptcha via Google Account to get public key'
 RECAPTCHA_PRIVATE_KEY = 'SetInLocalSettings'
+
+ACCOUNTS_TEMPLATES = {
+    'index': 'accounts/index.html',
+    'login': 'accounts/login.html',
+    'user_detail_form': 'accounts/user_detail_form.html',
+    'change_password_form': 'accounts/change_password_form.html',
+    'registration_error': 'accounts/registration_error.html',
+    'success': 'accounts/success.html',
+    'register': 'accounts/register.html',
+    'check_your_email': 'accounts/check_your_email.html',
+    'social_confirm': 'accounts/social_confirm.html',
+    'verify_email_txt': 'accounts/mail/verify_email.txt',
+    'verify_email_html': 'accounts/mail/verify_email.html',
+    'verify_email_success': 'accounts/verify_email_success.html',
+    'debug': 'accounts/debug.html',
+    'wait_for_email': 'accounts/forgot/wait_for_email.html',
+    'forgot': 'accounts/forgot/forgot.html',
+    'reset_successful': 'accounts/forgot/reset_successful.html',
+    'reset': 'accounts/forgot/reset.html',
+}
 ### END MP-ACCOUNTS SETTINGS ###
