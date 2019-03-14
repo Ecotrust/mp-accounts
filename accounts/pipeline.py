@@ -22,7 +22,7 @@ def get_social_details(user, backend, response, details, strategy, *args, **kwar
 
     # Handle backend-specific data collection, such as profile picture
     if backend.name == 'facebook':
-        facebook_image_url = 'http://graph.facebook.com/v2.2/{id}/picture'
+        facebook_image_url = 'https://graph.facebook.com/v2.2/{id}/picture'
         # append ?redirect=false to get a result in JSON
         id = response.get('id', None)
         if id:
@@ -61,9 +61,9 @@ def get_social_details(user, backend, response, details, strategy, *args, **kwar
     user.userdata.save()
 
 def set_user_permissions(strategy, details, user=None, *args, **kwargs):
-    """Configure any initial permissions/groups for the user. 
+    """Configure any initial permissions/groups for the user.
     """
-    
+
     apply_user_permissions(user)
 
 

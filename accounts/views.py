@@ -524,7 +524,7 @@ def send_verification_email(request, e, text_template=None, html_template=None):
     url = request.build_absolute_uri(reverse('account:verify_email',
                                              args=(e.verification_code,)))
 
-    context = Context({'name': e.user.get_short_name(), 'url': url, 'host': 'http://portal.midatlanticocean.org'})
+    context = Context({'name': e.user.get_short_name(), 'url': url, 'host': 'https://portal.midatlanticocean.org'})
     if not text_template:
         try:
             text_template = settings.ACCOUNTS_TEMPLATES['verify_email_txt']
