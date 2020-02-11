@@ -96,7 +96,6 @@ class SignUpForm(DivForm):
         password = cleaned_data.get('password')
         confirm_password = cleaned_data.get('confirm_password')
 
-
         if get_user_model().objects.filter(username=username).exists():
             msg = u"This user name is already in use, please select another."
             self.add_error("username", msg)
@@ -123,7 +122,7 @@ class LogInForm(DivForm):
 
 
 class ForgotPasswordForm(DivForm):
-    email = forms.EmailField(widget=l_icon('fa fa-envelope-o', 'email address'))
+    email = forms.EmailField(widget=l_icon('far fa-envelope', 'email address'))
 
 
 class ResetPasswordForm(DivForm):
@@ -202,7 +201,7 @@ class SocialAccountConfirmForm(DivForm):
     """A form that allows the user to enter some of their pertinent details
     before continuing to the site.
     """
-    email = forms.EmailField(widget=l_icon('fa fa-envelope-o', 'email address'))
+    email = forms.EmailField(widget=l_icon('far fa-envelope', 'email address'))
 
     real_name = forms.CharField(min_length=3, max_length=256,
                                 widget=l_icon('fa fa-user', 'Real Name'))
@@ -225,10 +224,9 @@ class SocialAccountConfirmForm(DivForm):
 
 class UserDetailForm(SocialAccountConfirmForm):
     """A form for a user editing their info.
-    Currently identical to the Social account confirmation form.
+    Nearly identical to the Social account confirmation form.
     """
 
-    ### From MidAtlanticPortal mp-accounts ⍾
     ### RDH: 12/01/2017
     # We need to allow users to change data without changing their email
     # We also need to make sure that users still can't steal other user's

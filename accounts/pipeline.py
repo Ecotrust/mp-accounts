@@ -1,10 +1,10 @@
-from social.exceptions import AuthException
+from social_core.exceptions import AuthException
 from django.contrib.auth.models import Group
 from django.http.response import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.mail import send_mail
 from django.conf import settings
-from social.pipeline.partial import partial
+from social_core.pipeline.partial import partial
 import urlparse
 import urllib
 from django.shortcuts import redirect
@@ -12,7 +12,7 @@ from actions import apply_user_permissions
 from django.core.context_processors import request
 
 
-def get_social_details(user, backend, response, details, strategy, *args, **kwargs):
+def get_social_details(user, backend, response, details, strategy, request, *args, **kwargs):
     """Create the UserData table, and gather data from the social provider and
     store it in the user data.
     Right now, we're just extracting the profile picture
@@ -28,7 +28,7 @@ def get_social_details(user, backend, response, details, strategy, *args, **kwar
         if id:
             user.userdata.profile_image = facebook_image_url.format(id=id)
 
-    elif backend.name == 'google-plus':
+    elif backend.name == 'google':
         url = response.get('image', {})
         url = url.get('url')
         if url:
@@ -60,12 +60,11 @@ def get_social_details(user, backend, response, details, strategy, *args, **kwar
 
     user.userdata.save()
 
-def set_user_permissions(strategy, details, user=None, *args, **kwargs):
+def set_user_permissions(strategy, backend, request, details, user=None, *args, **kwargs):
     """Configure any initial permissions/groups for the user.
     """
 
     apply_user_permissions(user)
-
 
 @partial
 def confirm_account(strategy, details, user=None, is_new=False, *args, **kwargs):
@@ -83,7 +82,7 @@ def confirm_account(strategy, details, user=None, is_new=False, *args, **kwargs)
         strategy.session_set('new_account', False)
 
 
-def clean_session(strategy=None, *args, **kwargs):
+def clean_session(strategy, backend, request, details, *args, **kwargs):
     """If a user abandons the login in the middle, then various session
     variables may hang around and screw up the logic for the next try.
     This function cleans the session at the start of the pipeline and at the

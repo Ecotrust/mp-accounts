@@ -20,7 +20,7 @@ class BSLeftIconTextInput(TextInput):
         self.icon_class = icon_class
         super(BSLeftIconTextInput, self).__init__(attrs)
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         default_input = super(BSLeftIconTextInput, self).render(name, value,
                                                                 attrs)
 
@@ -35,7 +35,9 @@ class BSLeftIconPasswordInput(BSLeftIconTextInput):
         """
         # A weird hack to avoid a weird bug - sorry I didn't have time
         # to work this one out. RDH 07/17/2017
-        kwargs.pop('renderer', None)
+        # kwargs.pop('renderer', None)
+        # RDH 2020-2-11: updated header indicates that 'renderer' is expected now.
+
         return super(BSLeftIconPasswordInput, self).render(name, None, *args,
                                                            **kwargs)
 

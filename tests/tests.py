@@ -1,7 +1,7 @@
 import random
 import datetime
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import TestCase
 from accounts.context_processors import login_disabled
 from django.contrib.auth.models import User

@@ -7,13 +7,13 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.http.response import Http404, HttpResponseRedirect, JsonResponse
 from django.contrib.auth import authenticate, login
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.template.loader import get_template
 from django.template.context import Context
 from django.contrib.auth.decorators import login_required, user_passes_test
 try:
     from urllib import quote
-except:
+except Exception as e:
     from urllib.parse import quote
 
 from accounts.models import EmailVerification
@@ -28,7 +28,7 @@ from nursery.view_helpers import decorate_view
 def index(request, template=None):
     """Serve up the primary account view, or the login view if not logged in
     """
-    if request.user.is_anonymous():
+    if request.user.is_anonymous:
         return login_page(request)
 
     c = {}
@@ -139,7 +139,21 @@ def login_logic(request, c={}):
     c['next']=quote(next_page)
     c['form']=form
 
-    return c
+    # RDH 2020-02-11: this came from MidA DJ2 merge. Dunno if we should keep it
+    from marco.settings import SOCIAL_AUTH_GOOGLE_OAUTH2_KEY, SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET, SOCIAL_AUTH_FACEBOOK_KEY, SOCIAL_AUTH_FACEBOOK_SECRET, SOCIAL_AUTH_TWITTER_KEY, SOCIAL_AUTH_TWITTER_SECRET
+    google_enabled = SOCIAL_AUTH_GOOGLE_OAUTH2_KEY != 'You forgot to set the google key' and SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET != 'You forgot to set the google secret'
+    facebook_enabled = SOCIAL_AUTH_FACEBOOK_KEY != 'You forgot to set the facebook key' and SOCIAL_AUTH_FACEBOOK_SECRET != 'You forgot to set the facebook secret'
+    twitter_enabled = SOCIAL_AUTH_TWITTER_KEY != 'You forgot to set the twitter key' and SOCIAL_AUTH_TWITTER_SECRET != 'You forgot to set the twitter secret'
+    show_social_options = google_enabled or facebook_enabled or twitter_enabled
+    # show_social_options = False
+
+    # c = dict(next=quote(next_page), form=form, google=google_enabled, facebook=facebook_enabled, twitter=twitter_enabled, social=show_social_options)
+    c['google']=google_enabled
+    c['facebook']=facebook_enabled
+    c['twitter']=twitter_enabled
+    c['social']=show_social_options
+
+    return render(request, 'accounts/login.html', c)
 
 def login_async(request):
     login_user = login_logic(request) # run default logic
@@ -212,8 +226,7 @@ class UserDetailView(FormView):
 
         return super(FormView, self).form_valid(form)
 
-    # From MidAtlanticPortal mp-accounts ⍾
-    # RDH: 12/01/2017
+    ### RDH: 12/01/2017
     # get_form_kwargs allows us to know the request's user when cleaning the
     # form. See forms.py for more.
 
@@ -221,8 +234,6 @@ class UserDetailView(FormView):
         kwargs = super(UserDetailView, self).get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
-
-
 
 @decorate_view(login_required)
 class ChangePasswordView(FormView):
@@ -261,8 +272,12 @@ class ChangePasswordView(FormView):
         return super(FormView, self).form_valid(form)
 
 def register_logic(request, c={}, template=None):
+    if not request.user.is_anonymous():
+        return HttpResponseRedirect('/')
+
     c['error'] = ''
     c['success'] = False
+
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -427,8 +442,8 @@ def verify_new_email(request, template=None):
 
 def social_confirm(request, template=None):
     data = request.session.get('partial_pipeline')
-    if not data['backend']:
-        raise HttpResponseRedirect('/')
+    if not data or not 'backend' in data.keys():
+        return HttpResponseRedirect('/')
 
     if request.method == 'POST':
         form = SocialAccountConfirmForm(request.POST)
@@ -612,7 +627,6 @@ def debug_page(request, template=None):
 
     return render(request, template, c)
 
-
 def forgot(request, template=None):
     """Sends a password reset link to a user's validated email address. If
     the email address isn't validated, do nothing (?)
@@ -635,11 +649,10 @@ def forgot(request, template=None):
                 else:
                     try:
                         send_password_reset_email(request, user)
-                    except User.userdata.RelatedObjectDoesNotExist:
+                    except User.userdata.RelatedObjectDoesNotExist as e:
                         from accounts.models import UserData
                         UserData.objects.get_or_create(user=user)
                         send_password_reset_email(request, user)
-
 
             except User.DoesNotExist:
                 pass

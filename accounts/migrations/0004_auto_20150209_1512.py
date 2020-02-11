@@ -18,13 +18,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='userdata',
             name='preferred_name',
-            field=models.CharField(default=b'', max_length=30),
+            field=models.CharField(default='', max_length=30),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='userdata',
             name='real_name',
-            field=models.CharField(default=b'', max_length=256),
+            field=models.CharField(default='', max_length=256),
             preserve_default=True,
         ),
         migrations.AddField(

@@ -7,7 +7,9 @@ from django.templatetags.static import static
 class EmailVerification(models.Model):
     """Model to store email address verification data.
     """
-    user = models.OneToOneField(User) # one verification at a time
+    # RDH 2020-2-11: merging ET vs MidA Forks. Not sure which to use, but migrations will work if we keep OntToOneField
+    # user = models.ForeignKey(User, unique=True, on_delete=models.CASCADE) # one verification at a time
+    user = models.OneToOneField(User, on_delete=models.CASCADE) # one verification at a time
     email_to_verify = models.EmailField()
     verification_code = models.CharField(max_length=32, editable=False)
     # Expire verifications after XX days?
@@ -31,7 +33,7 @@ class EmailVerification(models.Model):
 class UserData(models.Model):
     """Model to store additional user-related information.
     """
-    user = models.OneToOneField(User, primary_key=True)
+    user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
     email_verified = models.BooleanField(default=False,
                                          help_text=("Has this user's email "
                                                     "been verified?"))
