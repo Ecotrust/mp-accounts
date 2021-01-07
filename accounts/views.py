@@ -7,9 +7,11 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.http.response import Http404, HttpResponseRedirect, JsonResponse
 from django.contrib.auth import authenticate, login
-from django.urls import reverse, reverse_lazy
+try:
+    from django.urls import reverse, reverse_lazy
+except (ModuleNotFoundError, ImportError) as e:
+    from django.core.urlresolvers import reverse, reverse_lazy
 from django.template.loader import get_template
-from django.template.context import Context
 from django.contrib.auth.decorators import login_required, user_passes_test
 try:
     from urllib import quote
@@ -140,10 +142,16 @@ def login_logic(request, c={}):
     c['form']=form
 
     # RDH 2020-02-11: this came from MidA DJ2 merge. Dunno if we should keep it
-    from marco.settings import SOCIAL_AUTH_GOOGLE_OAUTH2_KEY, SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET, SOCIAL_AUTH_FACEBOOK_KEY, SOCIAL_AUTH_FACEBOOK_SECRET, SOCIAL_AUTH_TWITTER_KEY, SOCIAL_AUTH_TWITTER_SECRET
-    google_enabled = SOCIAL_AUTH_GOOGLE_OAUTH2_KEY != 'You forgot to set the google key' and SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET != 'You forgot to set the google secret'
-    facebook_enabled = SOCIAL_AUTH_FACEBOOK_KEY != 'You forgot to set the facebook key' and SOCIAL_AUTH_FACEBOOK_SECRET != 'You forgot to set the facebook secret'
-    twitter_enabled = SOCIAL_AUTH_TWITTER_KEY != 'You forgot to set the twitter key' and SOCIAL_AUTH_TWITTER_SECRET != 'You forgot to set the twitter secret'
+    try:
+        from marco.settings import SOCIAL_AUTH_GOOGLE_OAUTH2_KEY, SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET, SOCIAL_AUTH_FACEBOOK_KEY, SOCIAL_AUTH_FACEBOOK_SECRET, SOCIAL_AUTH_TWITTER_KEY, SOCIAL_AUTH_TWITTER_SECRET
+        google_enabled = SOCIAL_AUTH_GOOGLE_OAUTH2_KEY != 'You forgot to set the google key' and SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET != 'You forgot to set the google secret'
+        facebook_enabled = SOCIAL_AUTH_FACEBOOK_KEY != 'You forgot to set the facebook key' and SOCIAL_AUTH_FACEBOOK_SECRET != 'You forgot to set the facebook secret'
+        twitter_enabled = SOCIAL_AUTH_TWITTER_KEY != 'You forgot to set the twitter key' and SOCIAL_AUTH_TWITTER_SECRET != 'You forgot to set the twitter secret'
+    except ImportError as e:
+        # from django.conf.settings import SOCIAL_AUTH_FACEBOOK_KEY, SOCIAL_AUTH_FACEBOOK_SECRET, SOCIAL_AUTH_TWITTER_KEY, SOCIAL_AUTH_TWITTER_SECRET
+        google_enabled = False
+        facebook_enabled = settings.SOCIAL_AUTH_FACEBOOK_KEY != 'You forgot to set the facebook key' and settings.SOCIAL_AUTH_FACEBOOK_SECRET != 'You forgot to set the facebook secret'
+        twitter_enabled = settings.SOCIAL_AUTH_TWITTER_KEY != 'You forgot to set the twitter key' and settings.SOCIAL_AUTH_TWITTER_SECRET != 'You forgot to set the twitter secret'
     show_social_options = google_enabled or facebook_enabled or twitter_enabled
     # show_social_options = False
 
@@ -153,7 +161,7 @@ def login_logic(request, c={}):
     c['twitter']=twitter_enabled
     c['social']=show_social_options
 
-    return render(request, 'accounts/login.html', c)
+    return c
 
 def login_async(request):
     login_user = login_logic(request) # run default logic
@@ -272,7 +280,7 @@ class ChangePasswordView(FormView):
         return super(FormView, self).form_valid(form)
 
 def register_logic(request, c={}, template=None):
-    if not request.user.is_anonymous():
+    if not request.user.is_anonymous:
         return HttpResponseRedirect('/')
 
     c['error'] = ''
@@ -415,7 +423,7 @@ def register_page(request, c={}):
     return render(request, template, register_user)
 
 def register(request, c={}):
-    if not request.user.is_anonymous():
+    if not request.user.is_anonymous:
         return HttpResponseRedirect('/')
     register_user = register_logic(request, c) # run default logic
     template =  register_user['template']
@@ -539,7 +547,11 @@ def send_verification_email(request, e, text_template=None, html_template=None):
     url = request.build_absolute_uri(reverse('account:verify_email',
                                              args=(e.verification_code,)))
 
-    context = Context({'name': e.user.get_short_name(), 'url': url, 'host': 'https://portal.midatlanticocean.org'})
+    context = {
+        'name': e.user.get_short_name(),
+        'url': url,
+        'host': settings.EMAIL_HOST_ADDRESS
+    }
     if not text_template:
         try:
             text_template = settings.ACCOUNTS_TEMPLATES['verify_email_txt']
@@ -549,7 +561,7 @@ def send_verification_email(request, e, text_template=None, html_template=None):
     if not text_template:
         text_template = 'accounts/mail/verify_email.txt'
     template = get_template(text_template)
-    body_txt = template.render(context)
+    body_txt = template.render(context, request)
     if not html_template:
         try:
             html_template = settings.ACCOUNTS_TEMPLATES['verify_email_html']
@@ -559,7 +571,8 @@ def send_verification_email(request, e, text_template=None, html_template=None):
     if not html_template:
         html_template = 'accounts/mail/verify_email.html'
     template = get_template(html_template)
-    body_html = template.render(context)
+    body_html = template.render(context, request)
+
     e.user.email_user('Please verify your email address', body_txt,
                       html_message=body_html, fail_silently=False)
 
@@ -607,7 +620,7 @@ def all_logged_in_users():
 def debug_page(request, template=None):
     """Serve up the primary account view, or the login view if not logged in
     """
-    if request.user.is_anonymous():
+    if request.user.is_anonymous:
         return login_page(request)
 
     c = {}
@@ -632,7 +645,7 @@ def forgot(request, template=None):
     the email address isn't validated, do nothing (?)
     """
     # This doesn't make sense if the user is logged in
-    if not request.user.is_anonymous():
+    if not request.user.is_anonymous:
         return HttpResponseRedirect('/')
 
     if request.method == 'POST':
@@ -691,7 +704,7 @@ def forgot_reset(request, code, template=None):
     password.
     """
     # This doesn't make sense if the user is logged in
-    if not request.user.is_anonymous():
+    if not request.user.is_anonymous:
         return HttpResponseRedirect('/')
 
     e = get_object_or_404(EmailVerification, verification_code=code)

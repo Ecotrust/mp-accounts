@@ -1,12 +1,20 @@
 from social_core.exceptions import AuthException
 from django.contrib.auth.models import Group
 from django.http.response import HttpResponseRedirect
-from django.urls import reverse
+try:
+    from django.urls import reverse
+except (ModuleNotFoundError, ImportError) as e:
+    from django.core.urlresolvers import reverse
 from django.core.mail import send_mail
 from django.conf import settings
 from social_core.pipeline.partial import partial
 import urlparse
-import urllib
+try:
+    # python 3
+    from urllib.parse import urlencode
+except (ModuleNotFoundError, ImportError) as e:
+    #python 2
+    from urllib import urlencode
 from django.shortcuts import redirect
 from actions import apply_user_permissions
 from django.core.context_processors import request
@@ -35,7 +43,7 @@ def get_social_details(user, backend, response, details, strategy, request, *arg
             # The default URL provides an image of size 50, we want size 64
             # so swap out ?sz=50 with ?sz=64
             url = urlparse.urlsplit(url)
-            query = urllib.urlencode({'sz': '64'})
+            query = urlencode({'sz': '64'})
             # reassemble
             url = (url.scheme, url.netloc, url.path, query, url.fragment)
             url = urlparse.urlunsplit(url)

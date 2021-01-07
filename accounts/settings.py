@@ -111,6 +111,7 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 EMAIL_HOST_USER = 'noreply@ecotrust.org'
+EMAIL_HOST_ADDRESS = 'https://portal.midatlanticocean.org'
 DEFAULT_FROM_EMAIL = 'noreply@ecotrust.org'
 SERVER_EMAIL = 'noreply@ecotrust.org'
 PROJECT_SITE = 'https://portal.midatlanticocean.org'

@@ -12,19 +12,31 @@
 
             {{ form.as_div }}
 
-            {% if allow_social_login %}
+            {% if allow_social_login and social %}
                 <div class="social-login">
                     <p>or log in with</p>
+                    {% if twitter %}
                     <a class="fa-stack fa-lg" href="{% url 'social:begin' 'twitter' %}?next={{ next }}">
                         <i class="fa fa-circle fa-stack-2x green"></i>
                         <i class="fa fa-twitter fa-stack-1x white"></i>
                     </a>
+                    {% endif %} <!-- twitter -->
+
+                    {% if facebook %}
                     <a class="fa-stack fa-lg" href="{% url 'social:begin' 'facebook' %}?next={{ next }}">
                         <i class="fa fa-circle fa-stack-2x green"></i>
                         <i class="fa fa-facebook fa-stack-1x white"></i>
                     </a>
+                    {% endif %} <!-- facebook -->
+
+                    {% if google %}
+                    <a class="fa-stack fa-lg" href="{% url 'social:begin' 'google-oauth2' %}?next={{ next }}">
+                        <i class="fa fa-circle fa-stack-2x green"></i>
+                        <i class="fab fa-google fa-stack-1x white"></i>
+                    </a>
+                    {% endif %} <!-- google -->
                 </div>
-            {% endif %}
+            {% endif %}<!-- allow_social_login and social -->
 
             <div class="form-btn-wrap">
                 <input type="submit" class="btn btn-success login-btn" value="Login" />

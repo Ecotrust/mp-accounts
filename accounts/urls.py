@@ -1,9 +1,11 @@
-# from django.conf.urls import url
-from django.urls import re_path, include
+try:
+    from django.urls import re_path, include
+except (ModuleNotFoundError, ImportError) as e:
+    from django.conf.urls import url as re_path, include
 from django.conf import settings
 from django.views.generic import RedirectView
 from accounts import views
-from django.contrib import auth
+from django.contrib.auth import views as auth_views
 
 app_name = 'account'
 
@@ -12,7 +14,7 @@ urlpatterns = [
         name='login'),
     re_path(r'^login_page/$', views.login_page, name="login_page"),
     re_path(r'^login_async/$', views.login_async, name='login_async'),
-    re_path(r'^logout/$', auth.logout, {'next_page': '/'},
+    re_path(r'^logout/$', auth_views.LogoutView.as_view(next_page='/'),
         name='logout'),
     re_path(r'^register/$', views.register, name='register'),
     re_path(r'^register_page/$', views.register_page, name='register_page'),

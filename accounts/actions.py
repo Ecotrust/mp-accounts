@@ -2,8 +2,10 @@ from django.utils.crypto import get_random_string
 import re
 from django.contrib.auth.models import Group
 from django.conf import settings
-from django.urls import reverse
-from django.template.context import Context
+try:
+    from django.urls import reverse
+except (ModuleNotFoundError, ImportError) as e:
+    from django.core.urlresolvers import reverse
 from django.template.loader import get_template
 from accounts.models import EmailVerification
 
@@ -11,7 +13,7 @@ def apply_user_permissions(user):
     """Configure any initial permissions/groups for the user.
     """
 
-    if not user or user.is_anonymous():
+    if not user or user.is_anonymous:
         return
 
     g, created = Group.objects.get_or_create(name='Designers')
@@ -71,7 +73,7 @@ def send_password_reset_email(request, user):
     }
 
     template = get_template('accounts/forgot/mail/password_reset.txt')
-    body_txt = template.render(context)
+    body_txt = template.render(context, request)
 
     # TODO: Make HTML template.
     body_html = body_txt
@@ -97,7 +99,7 @@ def send_social_auth_provider_login_email(request, user):
     }
 
     template = get_template('accounts/forgot/mail/you_are_using_a_social_account.txt')
-    body_txt = template.render(context)
+    body_txt = template.render(context,request)
     # TODO: Make HTML template.
     # TODO: Maybe store emails in Markdown, and then dynamically convert to
     # HTML. That way we don't have to store multiple messages.
