@@ -16,6 +16,7 @@ urlpatterns = [
     re_path(r'^login_async/$', views.login_async, name='login_async'),
     re_path(r'^logout/$', auth_views.LogoutView.as_view(next_page='/'),
         name='logout'),
+    re_path(r'^logout_async/$', views.logout_view, name="logout_async"),
     re_path(r'^register/$', views.register, name='register'),
     re_path(r'^register_page/$', views.register_page, name='register_page'),
     re_path(r'^register_async/$', views.register_async, name='register_async'),
