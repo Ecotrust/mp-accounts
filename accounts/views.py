@@ -6,7 +6,7 @@ from django.contrib.sessions.models import Session
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.http.response import Http404, HttpResponseRedirect, JsonResponse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse, reverse_lazy
 from django.template.loader import get_template
 from django.template.context import Context
@@ -182,6 +182,11 @@ def login_page(request, return_template=None, c={}):
         return_template = 'accounts/login.html'
 
     return render(request, return_template, login_user)
+
+def logout_view(request):
+    logout(request)
+    next_page = request.GET.get('next', '/')
+    return HttpResponseRedirect(next_page)
 
 @decorate_view(login_required)
 class UserDetailView(FormView):
