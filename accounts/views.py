@@ -24,30 +24,33 @@ from .actions import apply_user_permissions, send_password_reset_email,\
 from nursery.view_helpers import decorate_view
 
 
-def index(request):
+def index(request, template='accounts/index.html', login_template=None):
     """Serve up the primary account view, or the login view if not logged in
     """
     if request.user.is_anonymous:
-        return login_page(request)
+        if not login_template:
+            return login_page(request)
+        else:
+            return login_page(request, template=login_template)
 
-    c = {}
+    additional_context = {}
 
     user = request.user
     if getattr(user, 'social_auth', None) and user.social_auth.exists():
-        c['can_change_password'] = False
+        additional_context['can_change_password'] = False
     else:
-        c['can_change_password'] = True
+        additional_context['can_change_password'] = True
 
-    return render(request, 'accounts/index.html', c)
+    return render(request, template, additional_context)
 
 
-def login_page(request):
+def login_page(request, template='accounts/login.html'):
     """The login view. Served from index()
     """
     User = get_user_model()
 
     next_page = request.GET.get('next', '/')
-    c = {}
+    additional_context = {}
 
     if request.method == 'POST':
         form = LogInForm(request.POST)
@@ -65,8 +68,8 @@ def login_page(request):
                 form.cleaned_data = {}
 
                 form.add_error('email', "Your login information does not match our records. Try again or click 'I forgot my password' below.")
-                c = dict(next=quote(next_page), form=form)
-                return render(request, 'accounts/login.html', c)
+                additional_context = dict(next=quote(next_page), form=form)
+                return render(request, template, additional_context)
 
             user = authenticate(username=user.username, password=p)
             if user is not None:
@@ -79,22 +82,22 @@ def login_page(request):
 
                     form.add_error('email', "Your email address is incorrect")
                     form.add_error('password', "Your password is incorrect")
-                    c = dict(next=quote(next_page), form=form)
-                    return render(request, 'accounts/login.html', c)
+                    additional_context = dict(next=quote(next_page), form=form)
+                    return render(request, template, additional_context)
             else:
                 form = LogInForm()
                 form.cleaned_data = {}
 
                 form.add_error('email', "Your login information does not match our records. Try again or click 'I forgot my password' below.")
-                c = dict(next=quote(next_page), form=form)
-                return render(request, 'accounts/login.html', c)
+                additional_context = dict(next=quote(next_page), form=form)
+                return render(request, template, additional_context)
         else:
             form = LogInForm()
             form.cleaned_data = {}
 
             form.add_error('email', "Please try again")
-            c = dict(next=quote(next_page), form=form)
-            return render(request, 'accounts/login.html', c)
+            additional_context = dict(next=quote(next_page), form=form)
+            return render(request, template, additional_context)
     else:
         form = LogInForm()
 
@@ -112,7 +115,7 @@ def login_page(request):
 
     c = dict(next=quote(next_page), form=form, google=google_enabled, facebook=facebook_enabled, twitter=twitter_enabled, social=show_social_options)
 
-    return render(request, 'accounts/login.html', c)
+    return render(request, template, c)
 
 
 @decorate_view(login_required)
@@ -192,7 +195,7 @@ class ChangePasswordView(FormView):
 
         return super(FormView, self).form_valid(form)
 
-def register(request):
+def register(request, template='accounts/register.html', success_template='accounts/success.html', error_template='accounts/registration_error.html'):
     """Show the registration page.
     """
 
@@ -212,7 +215,7 @@ def register(request):
             if not created:
                 # This may happen if the form is submitted outside the normal
                 # login flow with a user that already exists
-                return render(request, 'accounts/registration_error.html')
+                return render(request, error_template)
 
             user.is_active = True
             user.set_password(password)
@@ -226,7 +229,7 @@ def register(request):
             apply_user_permissions(user)
             # verify_email_address(request, user)
 
-            return render(request, 'accounts/success.html')
+            return render(request, success_template)
     else:
         form = SignUpForm()
 
@@ -237,14 +240,14 @@ def register(request):
     show_social_options = google_enabled or facebook_enabled or twitter_enabled
 
 
-    c = {
+    additional_context = {
         'form': form,
         'google': google_enabled,
         'facebook': facebook_enabled,
         'twitter': twitter_enabled,
         'social': show_social_options,
     }
-    return render(request, 'accounts/register.html', c)
+    return render(request, template, additional_context)
 
 
 @login_required
@@ -402,7 +405,7 @@ def debug_page(request):
     return render(request, 'accounts/debug.html', c)
 
 
-def forgot(request):
+def forgot(request, template='accounts/forgot/forgot.html', wait_template='accounts/forgot/wait_for_email.html'):
     """Sends a password reset link to a user's validated email address. If
     the email address isn't validated, do nothing (?)
     """
@@ -427,17 +430,17 @@ def forgot(request):
             except User.DoesNotExist:
                 pass
 
-            return render(request, 'accounts/forgot/wait_for_email.html')
+            return render(request, wait_template)
     else:
         form = ForgotPasswordForm()
 
-    c = {
+    additional_context = {
         'form': form,
     }
-    return render(request, 'accounts/forgot/forgot.html', c)
+    return render(request, template, additional_context)
 
 
-def forgot_reset(request, code):
+def forgot_reset(request, code, reset_template='accounts/forgot/reset.html', success_template='accounts/forgot/reset_successful.html'):
     """Allows a user who has clicked on a validation link to reset their
     password.
     """
@@ -463,16 +466,16 @@ def forgot_reset(request, code):
 
             e.delete()
 
-            return render(request, 'accounts/forgot/reset_successful.html')
+            return render(request, success_template)
 
     else:
         form = ResetPasswordForm()
 
-    c = {
+    additional_context = {
         'form': form,
         'code': code,
     }
-    return render(request, 'accounts/forgot/reset.html', c)
+    return render(request, reset_template, additional_context)
 
 
 if settings.DEBUG:

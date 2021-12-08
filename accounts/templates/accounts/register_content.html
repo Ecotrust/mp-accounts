@@ -1,0 +1,83 @@
+{% load welcome_entry %}
+{% welcome_entry %}
+
+<script src='https://www.google.com/recaptcha/api.js'></script>
+
+<div style="border: 1px solid #22408f; margin: 1em 10em; padding: 0 3em ">
+    <h2 id="form-begin" style="text-align: center;">Sign Up</h2>
+
+    <div class="login-form">
+        {% if social %}
+        <div><h4>Sign up with an existing social media account</h4></div>
+        <div class="social-login" style="text-align:center">
+            {% if twitter %}
+            <a class="fa-stack fa-lg" href="{% url 'social:begin' 'twitter' %}?next={{ next }}">
+                <i class="fa fa-circle fa-stack-2x green"></i>
+                <i class="fab fa-twitter fa-stack-1x white"></i>
+            </a>
+            {% endif %} <!-- twitter -->
+
+            {% if facebook %}
+            <a class="fa-stack fa-lg" href="{% url 'social:begin' 'facebook' %}?next={{ next }}">
+                <i class="fa fa-circle fa-stack-2x green"></i>
+                <i class="fab fa-facebook fa-stack-1x white"></i>
+            </a>
+            {% endif %} <!-- facebook -->
+
+            {% if google %}
+            <a class="fa-stack fa-lg" href="{% url 'social:begin' 'google-oauth2' %}?next={{ next }}">
+                <i class="fa fa-circle fa-stack-2x green"></i>
+                <i class="fab fa-google fa-stack-1x white"></i>
+            </a>
+            {% endif %} <!-- google -->
+        </div>
+        {% endif %} <!-- social -->
+    </div>
+    <div>
+        <form class="login-form" id="register-form" method="POST" action="{% url 'account:register' %}#form-begin">
+            <style>
+            .login-form {
+                margin-bottom: 1em;
+            }
+            .login-form > div {
+                width: 30em;
+                margin: 0 auto;
+            }
+            .login-form div + div {
+                padding-top: 1ex;
+            }
+            .login-form .form-control {
+                color: black;
+            }
+            .login-form .left-inner-addon { position: relative; }
+            .login-form .left-inner-addon input { padding-left: 30px; }
+            .login-form .left-inner-addon i {
+                position: absolute; padding: 10px 12px; cursor: default;
+            }
+            </style>
+            {% csrf_token %}
+
+            <hr style="border-color: #b1b3b5" />
+            <div>
+                {% if social %}
+                <h4>Or create a new account with a password</h4>
+                {% else %}
+                <h4>Create a new account with a password</h4>
+                {% endif %} <!-- social -->
+            </div>
+
+            {{ form.as_div }}
+            <hr style="border-color: #b1b3b5" />
+
+            <div style="text-align: center;">
+                <button class='btn btn-success' onclick='this.form.submit()'>Sign up &rarr;</button>
+            </div>
+        </form>
+    </div>
+
+    <p style="text-align: center">
+        <a href="{% url 'account:forgot_password' %}">I forgot my password</a>
+         &bull; <a href="/help/">Help</a>
+    </p>
+
+</div>
