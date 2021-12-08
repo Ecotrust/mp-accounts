@@ -6,65 +6,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="login">
 
-    <h2>Log in.</h2>
-
-    <p>Anyone can join the MARCO Portal&mdash;<a href="{% url 'account:register' %}">becoming a member</a> allows you
-    to join and create interest groups, custom data layers, and share
-    map views with your collaborators.</p>
-
-    <div>
-        <br />
-        <br />
-        <form class="login-form" method="POST" action="{% url 'account:index' %}{% if next %}?next={{ next }}{% endif %}">
-                {% csrf_token %}
-
-                {{ form.as_div }}
-
-            {% if social %}
-            <div class="social-login">
-                or log in with
-                {% if twitter %}
-                <a class="fa-stack fa-lg" href="{% url 'social:begin' 'twitter' %}?next={{ next }}">
-                    <i class="fa fa-circle fa-stack-2x green"></i>
-                    <i class="fab fa-twitter fa-stack-1x white"></i>
-                </a>
-                {% endif %} <!-- twitter -->
-
-                {% if facebook %}
-                <a class="fa-stack fa-lg" href="{% url 'social:begin' 'facebook' %}?next={{ next }}">
-                    <i class="fa fa-circle fa-stack-2x green"></i>
-                    <i class="fab fa-facebook fa-stack-1x white"></i>
-                </a>
-                {% endif %} <!-- facebook -->
-
-                {% if google %}
-                <a class="fa-stack fa-lg" href="{% url 'social:begin' 'google-oauth2' %}?next={{ next }}">
-                    <i class="fa fa-circle fa-stack-2x green"></i>
-                    <i class="fab fa-google fa-stack-1x white"></i>
-                </a>
-                {% endif %} <!-- google -->
-            </div>
-            {% endif %}  <!-- social -->
-
-            <div class="text-center">
-                <button class="btn btn-success btn-lg" onclick='this.form.submit()'>Log in &rarr;</button>
-            </div>
-        </form>
-    </div>
-
-    <div>
-        <br />
-        <br />
-        <p class="text-center">
-            <a href="{% url 'account:forgot_password' %}">I forgot my password</a>
-            &bull; <a href="{% url 'account:register' %}">I want to register</a>
-            &bull; <a href="/help/">Help</a>
-        </p>
-    </div>
-
-</div>
-
+  {% include "accounts/login_content.html" %}
 
 {% endblock %}
