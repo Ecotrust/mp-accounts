@@ -24,7 +24,7 @@ from .actions import apply_user_permissions, send_password_reset_email,\
 from nursery.view_helpers import decorate_view
 
 
-def index(request):
+def index(request, template_name='accounts/index.html'):
     """Serve up the primary account view, or the login view if not logged in
     """
     if request.user.is_anonymous:
@@ -38,7 +38,7 @@ def index(request):
     else:
         c['can_change_password'] = True
 
-    return render(request, 'accounts/index.html', c)
+    return render(request, template_name, c)
 
 
 def login_page(request):
