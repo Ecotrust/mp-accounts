@@ -32,7 +32,7 @@ class UserData(models.Model):
     email_verified = models.BooleanField(default=False,
                                          help_text=("Has this user's email "
                                                     "been verified?"))
-    profile_image = models.URLField(default=static('accounts/marco_user.png'),
+    profile_image = models.URLField(default=static('accounts/user_icon.png'),
                                     help_text=("URL to the user's profile image."))
 
     real_name = models.CharField(max_length=256, default='')
