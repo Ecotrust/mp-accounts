@@ -3,3 +3,5 @@ mp_accounts.egg-info
 build
 dist
 .idea
+accounts/static/marco_user.png
+accounts/static/user_icon.png
