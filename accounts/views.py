@@ -51,7 +51,7 @@ def login_page(request, template='accounts/login.html'):
 
     next_page = request.GET.get('next', '/')
     additional_context = {
-        APP_NAME: settings.APP_NAME,
+        'APP_NAME': settings.APP_NAME,
     }
 
     if request.method == 'POST':
@@ -70,7 +70,7 @@ def login_page(request, template='accounts/login.html'):
                 form.cleaned_data = {}
 
                 form.add_error('email', "Your login information does not match our records. Try again or click 'I forgot my password' below.")
-                additional_context = dict(next=quote(next_page), form=form)
+                additional_context.update(dict(next=quote(next_page), form=form))
                 return render(request, template, additional_context)
 
             user = authenticate(username=user.username, password=p)
@@ -84,21 +84,21 @@ def login_page(request, template='accounts/login.html'):
 
                     form.add_error('email', "Your email address is incorrect")
                     form.add_error('password', "Your password is incorrect")
-                    additional_context = dict(next=quote(next_page), form=form)
+                    additional_context.update(dict(next=quote(next_page), form=form))
                     return render(request, template, additional_context)
             else:
                 form = LogInForm()
                 form.cleaned_data = {}
 
                 form.add_error('email', "Your login information does not match our records. Try again or click 'I forgot my password' below.")
-                additional_context = dict(next=quote(next_page), form=form)
+                additional_context.update(dict(next=quote(next_page), form=form))
                 return render(request, template, additional_context)
         else:
             form = LogInForm()
             form.cleaned_data = {}
 
             form.add_error('email', "Please try again")
-            additional_context = dict(next=quote(next_page), form=form)
+            additional_context.update(dict(next=quote(next_page), form=form))
             return render(request, template, additional_context)
     else:
         form = LogInForm()
@@ -115,9 +115,9 @@ def login_page(request, template='accounts/login.html'):
     show_social_options = google_enabled or facebook_enabled or twitter_enabled
     # show_social_options = False
 
-    c = dict(next=quote(next_page), form=form, google=google_enabled, facebook=facebook_enabled, twitter=twitter_enabled, social=show_social_options)
+    additional_context.update(dict(next=quote(next_page), form=form, google=google_enabled, facebook=facebook_enabled, twitter=twitter_enabled, social=show_social_options))
 
-    return render(request, template, c)
+    return render(request, template, additional_context)
 
 
 @decorate_view(login_required)
