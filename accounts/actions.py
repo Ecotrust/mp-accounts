@@ -67,7 +67,10 @@ def send_password_reset_email(request, user):
     context = {
         'name': user.get_short_name(),
         'url': url,
+        'app_name': settings.APP_NAME,
+        'team_name': settings.APP_TEAM_NAME,
         'team_email': settings.DEFAULT_FROM_EMAIL,
+        'app_url': settings.APP_URL,
     }
 
     template = get_template('accounts/forgot/mail/password_reset.txt')
@@ -78,9 +81,7 @@ def send_password_reset_email(request, user):
 #     template = get_template('accounts/mail/verify_email.html')
 #     body_html = template.render(context)
 
-    user.email_user('MARCO Sign-in Information', body_txt, fail_silently=False)
-    #user.email_user('MARCO Sign-in Information', body_txt,
-    #                html_message=body_html, fail_silently=False)
+    user.email_user('{} Sign-in Information'.format(settings.APP_NAME), body_txt, fail_silently=False)
 
 
 def send_social_auth_provider_login_email(request, user):
@@ -94,6 +95,10 @@ def send_social_auth_provider_login_email(request, user):
         'name': user.get_short_name(),
         'auth_provider_name': nice_provider_name(user),
         'site_url': url,
+        'app_name': settings.APP_NAME,
+        'team_name': settings.APP_TEAM_NAME,
+        'team_email': settings.DEFAULT_FROM_EMAIL,
+        'app_url': settings.APP_URL,
     }
 
     template = get_template('accounts/forgot/mail/you_are_using_a_social_account.txt')
@@ -105,7 +110,7 @@ def send_social_auth_provider_login_email(request, user):
 #     template = get_template('accounts/mail/verify_email.html')
 #     body_html = template.render(context)
 
-    user.email_user('MARCO Sign-in Information', body_txt,
+    user.email_user('{} Sign-in Information'.format(settings.APP_URL), body_txt,
                     html_message=body_html, fail_silently=False)
 
 

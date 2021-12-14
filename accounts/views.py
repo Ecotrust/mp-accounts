@@ -50,7 +50,9 @@ def login_page(request, template='accounts/login.html'):
     User = get_user_model()
 
     next_page = request.GET.get('next', '/')
-    additional_context = {}
+    additional_context = {
+        APP_NAME: settings.APP_NAME,
+    }
 
     if request.method == 'POST':
         form = LogInForm(request.POST)
