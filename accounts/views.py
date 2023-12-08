@@ -22,8 +22,9 @@ from .forms import SignUpForm, ForgotPasswordForm,\
 from .actions import apply_user_permissions, send_password_reset_email,\
     send_social_auth_provider_login_email, generate_username
 from nursery.view_helpers import decorate_view
+from stronghold.decorators import public
 
-
+@public
 def index(request, template='accounts/index.html', login_template=None):
     """Serve up the primary account view, or the login view if not logged in
     """
@@ -43,7 +44,7 @@ def index(request, template='accounts/index.html', login_template=None):
 
     return render(request, template, additional_context)
 
-
+@public
 def login_page(request, template='accounts/login.html'):
     """The login view. Served from index()
     """
