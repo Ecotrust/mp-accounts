@@ -4,7 +4,7 @@ from .widgets import BSLeftIconTextInput, BSLeftIconPasswordInput,\
 from django.contrib.auth import get_user_model, authenticate
 from .models import PasswordDictionary
 from django.core.exceptions import ValidationError
-from captcha.fields import ReCaptchaField
+from django_recaptcha.fields import ReCaptchaField
 
 
 def l_icon(icon_class, placeholder=None, attrs=None):
