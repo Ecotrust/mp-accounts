@@ -108,12 +108,13 @@ def login_page(request, template='accounts/login.html'):
     # c = dict(GPLUS_ID=settings.SOCIAL_AUTH_GOOGLE_PLUS_KEY,
     #          GPLUS_SCOPE=' '.join(settings.SOCIAL_AUTH_GOOGLE_PLUS_SCOPES),
 
-    from marco.settings import SOCIAL_AUTH_GOOGLE_OAUTH2_KEY, SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET, SOCIAL_AUTH_FACEBOOK_KEY, SOCIAL_AUTH_FACEBOOK_SECRET, SOCIAL_AUTH_TWITTER_KEY, SOCIAL_AUTH_TWITTER_SECRET
-    google_enabled = SOCIAL_AUTH_GOOGLE_OAUTH2_KEY != 'You forgot to set the google key' and SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET != 'You forgot to set the google secret'
-    facebook_enabled = SOCIAL_AUTH_FACEBOOK_KEY != 'You forgot to set the facebook key' and SOCIAL_AUTH_FACEBOOK_SECRET != 'You forgot to set the facebook secret'
-    twitter_enabled = SOCIAL_AUTH_TWITTER_KEY != 'You forgot to set the twitter key' and SOCIAL_AUTH_TWITTER_SECRET != 'You forgot to set the twitter secret'
-    show_social_options = google_enabled or facebook_enabled or twitter_enabled
-    # show_social_options = False
+    def _social_enabled(key_name, secret_name):
+        return bool(getattr(settings, key_name, None)) and bool(getattr(settings, secret_name, None))
+
+    google_enabled = _social_enabled('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', 'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
+    facebook_enabled = _social_enabled('SOCIAL_AUTH_FACEBOOK_KEY',     'SOCIAL_AUTH_FACEBOOK_SECRET')
+    twitter_enabled = _social_enabled('SOCIAL_AUTH_TWITTER_KEY',      'SOCIAL_AUTH_TWITTER_SECRET')
+    show_social_options = any([google_enabled, facebook_enabled, twitter_enabled])
 
     additional_context.update(dict(next=quote(next_page), form=form, google=google_enabled, facebook=facebook_enabled, twitter=twitter_enabled, social=show_social_options))
 
@@ -235,11 +236,13 @@ def register(request, template='accounts/register.html', success_template='accou
     else:
         form = SignUpForm()
 
-    from marco.settings import SOCIAL_AUTH_GOOGLE_OAUTH2_KEY, SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET, SOCIAL_AUTH_FACEBOOK_KEY, SOCIAL_AUTH_FACEBOOK_SECRET, SOCIAL_AUTH_TWITTER_KEY, SOCIAL_AUTH_TWITTER_SECRET
-    google_enabled = SOCIAL_AUTH_GOOGLE_OAUTH2_KEY != 'You forgot to set the google key' and SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET != 'You forgot to set the google secret'
-    facebook_enabled = SOCIAL_AUTH_FACEBOOK_KEY != 'You forgot to set the facebook key' and SOCIAL_AUTH_FACEBOOK_SECRET != 'You forgot to set the facebook secret'
-    twitter_enabled = SOCIAL_AUTH_TWITTER_KEY != 'You forgot to set the twitter key' and SOCIAL_AUTH_TWITTER_SECRET != 'You forgot to set the twitter secret'
-    show_social_options = google_enabled or facebook_enabled or twitter_enabled
+    def _social_enabled(key_name, secret_name):
+        return bool(getattr(settings, key_name, None)) and bool(getattr(settings, secret_name, None))
+
+    google_enabled = _social_enabled('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', 'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
+    facebook_enabled = _social_enabled('SOCIAL_AUTH_FACEBOOK_KEY',     'SOCIAL_AUTH_FACEBOOK_SECRET')
+    twitter_enabled = _social_enabled('SOCIAL_AUTH_TWITTER_KEY',      'SOCIAL_AUTH_TWITTER_SECRET')
+    show_social_options = any([google_enabled, facebook_enabled, twitter_enabled])
 
 
     additional_context = {
